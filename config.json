@@ -1,0 +1,31 @@
+{
+	"danmuon": 0,
+	"color": "#00a1d6",
+	"logo": "./img/favicon.png",
+	"trytime": "3",
+	"waittime": "10",
+	"sendtime": "1",
+	"dmrule": "../dmku/dm_rule.html",
+	"pbgjz": "草,操,妈,逼,滚,网址,网站,支付宝,企,关注,wx,微信,qq,QQ",
+	"count": "100-1000",
+	"ads": {
+		"state": "off",
+		"set": {
+			"state": "2",
+			"group": "null",
+			"pic": {
+				"time": "10",
+				"img": "https://p2.ssl.qhimg.com/t110b9a9301d0bea028a8385e10.jpg",
+				"link": "#"
+			},
+			"vod": {
+				"url": "/ad.mp4",
+				"link": ""
+			}
+		},
+		"pause": {
+			"pic": "https://p2.ssl.qhimg.com/t110b9a9301d0bea028a8385e10.jpg",
+			"link": "#www.baidu.com"
+		}
+	}
+}
