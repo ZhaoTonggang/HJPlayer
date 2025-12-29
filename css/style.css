@@ -2336,11 +2336,10 @@ f .hjplayer.hjplayer-mobile .hjplayer-controller .hjplayer-icons .hjplayer-camer
 .hjplayer-logo {
 	pointer-events: none;
 	position: absolute;
-	right: 5%;
-	top: 5%;
+	right: 10px;
+	top: 10px;
 	width: 100px;
-	height: 55px;
-	opacity: .5;
+	height: 100px;
 }
 
 .hjplayer-logo img {
