@@ -8,7 +8,6 @@ const up = {
 
 // 获取 URL 参数
 const urlParams = getUrlParam("url") || '';
-console.log(urlParams)
 // 初始化配置对象（完全对应原 config 逻辑）
 const config = {
 	"api": 'https://api.danmu.icu/', // 弹幕接口
