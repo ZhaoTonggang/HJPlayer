@@ -1,28 +1,41 @@
 "use strict";
 // 获取URL中的url参数值
+const urldata = window.location.href;
+let search;
+// 解析URL参数部分
+try {
+	search = decodeURI(atob(urldata.substring(urldata.indexOf('?') + 1, urldata.indexOf('.html'))));
+} catch {
+	search = window.location.search.substr(1) || '';
+}
 const getUrlParam = (name) => {
-	// 解析URL参数部分（兼容hash模式路由）
-	const search = window.location.search.substr(1) || window.location.hash.split('?')[1] || '';
+	if (!search) return;
 	let result = search.match(new RegExp('(^|&)' + name + '=([^&]*)(&|$)'));
-	result = result ? decodeURIComponent(result[2]) : ''
-	if (result && name === 'url') result = decodeURI(atob(result));
+	result = result ? decodeURIComponent(result[2]) : '';
 	return result;
 }
-
 // 核心逻辑：根据url参数内容动态加载对应JS文件
 const urlParam = getUrlParam('url');
+const Script = document.createElement('script');
+Script.defer = true;
 if (urlParam.includes('m3u8')) {
 	const p2pinfo = getUrlParam('p2pinfo');
-	const hlsScript = document.createElement('script');
-	hlsScript.src = p2pinfo === "1" ? './js/p2p.min.js' : './js/hls.min.js';
-	// 创建script标签加载hls.min.js
-	document.head.appendChild(hlsScript);
+	// 加载hls.min.js
+	Script.src = p2pinfo === "1" ? './js/p2p.min.js' : './js/hls.min.js';
 } else if (urlParam.includes('flv')) {
-	// 创建script标签加载flv.min.js
-	const flvScript = document.createElement('script');
-	flvScript.src = './js/flv.min.js';
-	document.head.appendChild(flvScript);
+	// 加载flv.min.js
+	Script.src = './js/flv.min.js';
 }
+const bodyEl = document.body;
+// 方式1：使用 insertBefore 方法（精准控制插入位置，推荐）
+if (bodyEl.firstChild) {
+	// 如果 body 已有子元素，插入到第一个子元素之前（即 body 开头）
+	bodyEl.insertBefore(Script, bodyEl.firstChild);
+} else {
+	// 如果 body 为空（无任何子元素），直接追加（等价于开头）
+	bodyEl.appendChild(Script);
+}
+// document.head.appendChild(Script);
 // 创建style元素
 const sElement = document.createElement('style');
 sElement.type = 'text/css';

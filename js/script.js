@@ -1,14 +1,13 @@
 "use strict";
-// 初始化参数对象（与原 up 对象功能一致）
+// 初始化参数对象
 const up = {
 	"usernum": "100", // 在线人数
 	"mylink": "/player/?url=", // 播放器路径，用于下一集
 	"diyid": [0, '游客', 1] // 自定义弹幕id
 };
-
 // 获取 URL 参数
 const urlParams = getUrlParam("url") || '';
-// 初始化配置对象（完全对应原 config 逻辑）
+// 初始化配置对象
 const config = {
 	"api": 'https://api.danmu.icu/', // 弹幕接口
 	"av": getUrlParam("av") || '', // B站弹幕id（默认空字符串）
