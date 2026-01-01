@@ -11,6 +11,36 @@
 		<meta name="theme-color" content="#00ffff">
 		<link rel="shortcut icon" href="./img/favicon.png" type="image/x-icon">
 		<link rel="stylesheet" href="./css/style.css" />
+		<script>
+			// 获取URL中的url参数值
+			const urldata = window.location.href;
+			let search;
+			// 解析URL参数部分
+			try {
+				search = decodeURI(atob(urldata.substring(urldata.indexOf('?') + 1, urldata.indexOf('.html'))));
+			} catch {
+				search = window.location.search.substr(1) || '';
+			}
+			const getUrlParam = (name) => {
+				if (!search) return;
+				let result = search.match(new RegExp('(^|&)' + name + '=([^&]*)(&|$)'));
+				result = result ? decodeURIComponent(result[2]) : '';
+				return result;
+			}
+			// 核心逻辑：根据url参数内容动态加载对应JS文件
+			const urlParam = getUrlParam('url');
+			const Script = document.createElement('script');
+			Script.defer = true;
+			if (urlParam.includes('m3u8')) {
+				const p2pinfo = getUrlParam('p2pinfo');
+				// 加载hls.min.js
+				Script.src = p2pinfo === "1" ? './js/p2p.min.js' : './js/hls.min.js';
+			} else if (urlParam.includes('flv')) {
+				// 加载flv.min.js
+				Script.src = './js/flv.min.js';
+			}
+			document.head.appendChild(Script);
+		</script>
 	</head>
 	<body>
 		<div id="player"></div>

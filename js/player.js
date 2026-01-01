@@ -21,7 +21,7 @@
 	// 模块加载器核心函数
 	return function(moduleMap) {
 			// 模块缓存对象：存储已加载的模块，避免重复执行
-			const moduleCache = {};
+			const moduleCache = {}
 			// 核心模块加载函数：根据模块ID获取/执行模块
 			function requireModule(moduleId) {
 				// 若模块已缓存，直接返回缓存的模块导出对象
@@ -33,7 +33,7 @@
 					id: moduleId, // 模块唯一标识
 					loaded: false, // 模块是否已加载完成
 					exports: {} // 模块导出内容容器
-				};
+				}
 				// 执行模块函数，绑定模块上下文，传入模块对象、导出对象和加载函数
 				moduleMap[moduleId].call(module.exports, module, module.exports, requireModule);
 				// 标记模块已加载完成
@@ -41,7 +41,7 @@
 				// 返回模块的导出内容
 				return module.exports;
 			}
-			// 扩展 requireModule 的属性和方法（对应原代码的工具方法挂载）
+			// 扩展 requireModule 的属性和方法
 			// 挂载模块映射表（所有待加载的模块集合）
 			requireModule.m = moduleMap;
 			// 挂载模块缓存对象
@@ -56,7 +56,7 @@
 						get: getterFunc
 					});
 				}
-			};
+			}
 			// 处理 ES Module 兼容：获取模块的默认导出或自身
 			requireModule.n = function(moduleExports) {
 				// 判断是否为 ES Module 模块
@@ -67,15 +67,15 @@
 					:
 					function() {
 						return moduleExports;
-					}; // 普通模块取自身
+					} // 普通模块取自身
 				// 为获取函数挂载 "a" 属性（指向自身），兼容模块访问
 				requireModule.d(getModule, "a", getModule);
 				return getModule;
-			};
+			}
 			// 检查对象是否自身拥有指定属性（排除原型链继承属性）
 			requireModule.o = function(targetObj, propKey) {
 				return Object.prototype.hasOwnProperty.call(targetObj, propKey);
-			};
+			}
 			// 模块公共路径（对应 Webpack 的 publicPath 配置）
 			requireModule.p = "/";
 			// 执行入口模块（模块ID为5），并返回入口模块的导出内容
@@ -83,15 +83,15 @@
 		}
 		([
 			function(e, t, n) {
-				// 1. 定义浏览器环境相关判断（提前提取，语义化命名）
+				// 1. 定义浏览器环境相关判断
 				const isMobile = /mobile/i.test(window.navigator.userAgent);
 				const isFirefox = /firefox/i.test(window.navigator.userAgent);
 				const isChrome = /chrome/i.test(window.navigator.userAgent);
-				// 2. 补零工具函数（提取原匿名函数，语义化命名）
+				// 2. 补零工具函数
 				const formatNumber = (num) => {
 					return num < 10 ? `0${num}` : `${num}`;
-				};
-				// 3. 工具对象（核心功能保持不变，优化变量名和代码结构）
+				}
+				// 3. 工具对象
 				const utils = {
 					/**
 					 * 秒数转换为时分秒格式（有小时显示: 时:分:秒；无小时显示: 分:秒）
@@ -103,10 +103,8 @@
 						const minutes = Math.floor((seconds - 3600 * hours) / 60);
 						const secondsRemain = Math.floor(seconds - 3600 * hours - 60 * minutes);
 						// 有小时则返回[时, 分, 秒]，无小时返回[分, 秒]，统一补零并拼接
-						const timeSegments = hours > 0 ? [hours, minutes, secondsRemain] : [minutes,
-							secondsRemain
-						];
-						return timeSegments.map(formatNumber).join(":");
+						return (hours > 0 ? [hours, minutes, secondsRemain] : [minutes, secondsRemain])
+							.map(formatNumber).join(":");
 					},
 					/**
 					 * 获取元素相对于视口的左侧偏移量
@@ -116,13 +114,9 @@
 					getElementViewLeft: function(element) {
 						let leftOffset = element.offsetLeft;
 						let offsetParent = element.offsetParent;
-						const scrollLeft = document.body.scrollLeft + document.documentElement
-							.scrollLeft;
-						// 判断是否处于全屏状态（兼容主流浏览器）
-						const isFullScreen = !!document.fullscreenElement || !!document
-							.mozFullScreenElement || !!document.webkitFullscreenElement;
-						// 全屏状态下的偏移量计算
-						if (isFullScreen) {
+						// 判断是否处于全屏状态（兼容主流浏览器）, 全屏状态下的偏移量计算
+						if (!!document.fullscreenElement || !!document.mozFullScreenElement || !!
+							document.webkitFullscreenElement) {
 							while (offsetParent !== null && offsetParent !== element) {
 								leftOffset += offsetParent.offsetLeft;
 								offsetParent = offsetParent.offsetParent;
@@ -135,7 +129,8 @@
 								offsetParent = offsetParent.offsetParent;
 							}
 						}
-						return leftOffset - scrollLeft;
+						return leftOffset - document.body.scrollLeft - document.documentElement
+							.scrollLeft;
 					},
 					/**
 					 * 获取当前页面的滚动位置
@@ -156,10 +151,8 @@
 					 * @param {number} [position.top=0] - 垂直滚动目标位置
 					 */
 					setScrollPosition: function(position) {
-						// 优化参数获取，使用默认值替代void 0判断，更直观
 						const targetLeft = position.left ?? 0;
 						const targetTop = position.top ?? 0;
-						// 保留原Firefox兼容逻辑
 						if (isFirefox) {
 							document.documentElement.scrollLeft = targetLeft;
 							document.documentElement.scrollTop = targetTop;
@@ -167,11 +160,11 @@
 							window.scrollTo(targetLeft, targetTop);
 						}
 					},
-					// 浏览器环境标识（保留原属性）
+					// 浏览器环境标识
 					isMobile,
 					isFirefox,
 					isChrome,
-					// 本地存储工具（简化localStorage操作）
+					// 本地存储工具
 					storage: {
 						set: function(key, value) {
 							localStorage.setItem(key, value);
@@ -205,7 +198,7 @@
 						dragMove: isMobile ? "touchmove" : "mousemove",
 						dragEnd: isMobile ? "touchend" : "mouseup"
 					}
-				};
+				}
 				// 保留原模块导出规范：标记为ES模块，并导出默认值
 				Object.defineProperty(t, "__esModule", {
 					value: true
@@ -216,13 +209,11 @@
 			 * 跨环境获取全局对象（浏览器：window / Node.js：global 等）
 			 * @param {object} moduleExports - CommonJS模块的exports对象（对应原代码e）
 			 */
-			function getGlobalObject(moduleExports, _, __) {
+			function(moduleExports, _, __) {
 				// 类型判断工具函数：增强版typeof，准确识别Symbol类型
 				const typeOf = (() => {
 					// 判断环境是否支持Symbol
-					const supportsSymbol = typeof Symbol === 'function' && typeof Symbol.iterator ===
-						'symbol';
-					if (supportsSymbol) {
+					if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
 						return (value) => typeof value;
 					} else {
 						return (value) => {
@@ -249,12 +240,11 @@
 					}
 				} catch (error) {
 					// 异常降级：若以上方案失败，尝试直接使用window（浏览器环境）
-					const windowType = typeof window === 'undefined' ? 'undefined' : typeOf(window);
-					if (windowType === 'object') {
+					if (typeof window === 'undefined' ? 'undefined' : typeOf(window) === 'object') {
 						globalObj = window;
 					}
 				}
-				// 导出全局对象（对应原代码e.exports = i）
+				// 导出全局对象
 				moduleExports.exports = globalObj;
 			},
 			function(e, t, n) {
@@ -265,7 +255,7 @@
 						default: module
 					};
 				}
-				// 2. 标记当前模块为 ES Module（与原功能一致）
+				// 2. 标记当前模块为 ES Module
 				Object.defineProperty(t, "__esModule", {
 					value: true
 				});
@@ -273,7 +263,7 @@
 				// 按原顺序对应模块 ID 16-31，统一规范化后提取 default 导出
 				const modules = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map(moduleId =>
 					normalizeModule(n(moduleId)).default);
-				// 4. 构造导出对象 I（与原属性一一对应，保证功能完全一致）
+				// 4. 构造导出对象 I
 				const I = {
 					play: modules[0],
 					pause: modules[1],
@@ -291,8 +281,8 @@
 					camera: modules[13],
 					subtitle: modules[14],
 					loading: modules[15]
-				};
-				// 5. 导出默认对象（与原功能一致）
+				}
+				// 5. 导出默认对象
 				t.default = I;
 			},
 			function(e, t, n) {
@@ -300,15 +290,13 @@
 			},
 			// 构建视频标签字符串的工具函数
 			function(e, t, n) {
-				// 引入外部模块（转义工具）
-				const escapeUtil = n(3);
 				// 导出构建视频标签的核心函数
 				e.exports = function(videoOptions) {
 					// 处理入参默认值，避免 undefined 报错
 					videoOptions = videoOptions || {};
 					// 解构赋值：从配置对象中提取所需属性，语义化命名
 					const {
-						enableSubtitle, // 启用字幕（原代码中未实际使用，保留以兼容原功能）
+						enableSubtitle, // 启用字幕
 						subtitle, // 字幕配置
 						current, // 是否为当前激活的视频
 						pic, // 视频封面图地址
@@ -317,8 +305,8 @@
 						url // 视频资源地址
 					} = videoOptions;
 					// 缓存转义方法，简化后续调用
-					const $escape = escapeUtil.$escape;
-					// 判断是否为 webvtt 类型的字幕（覆盖原变量 n 的冗余声明，功能一致）
+					const $escape = n(3).$escape;
+					// 判断是否为 webvtt 类型的字幕
 					const isWebVttSubtitle = subtitle && subtitle.type === "webvtt";
 					// 初始化视频标签字符串
 					let videoTag = "";
@@ -357,20 +345,20 @@
 					videoTag += "\n</video>";
 					// 返回构建完成的视频标签字符串
 					return videoTag;
-				};
+				}
 			},
 			/**
-			 * 模块入口函数（保持原UMD模块结构，功能与原代码完全一致）
-			 * @param {*} e - 模块加载器相关参数（原代码未使用）
+			 * 模块入口函数
+			 * @param {*} e - 模块加载器相关参数
 			 * @param {Object} t - 模块导出对象
 			 * @param {Function} n - 模块导入函数（用于加载依赖模块）
 			 */
-			function moduleEntry(e, t, n) {
+			function(e, t, n) {
 				// 标记当前模块为ES Module规范
 				Object.defineProperty(t, "__esModule", {
 					value: true
 				});
-				// 加载依赖模块6（原代码无后续使用，仅执行加载）
+				// 加载依赖模块6
 				n(6);
 				// 加载依赖模块7，并处理非ES Module模块的兼容包装
 				const module7 = n(7);
@@ -381,9 +369,9 @@
 					}
 					return {
 						default: module7
-					};
+					}
 				})();
-				// 计算并打印页面加载耗时（保留原格式和样式）
+				// 计算并打印页面加载耗时
 				console.log('%c页面加载完毕消耗了' + Math.round(performance.now() * 100) / 100 + 'ms',
 					'background:#fff;color:#333;text-shadow:0 0 2px #eee,0 0 3px #eee,0 0 3px #eee,0 0 2px #eee,0 0 3px #eee;'
 				);
@@ -392,447 +380,831 @@
 			},
 			function(e, t) {},
 			function(e, t, n) {
-				function i(e) {
-					return e && e.__esModule ? e : {
-						default: e
+				// 标记ES模块
+				Object.defineProperty(t, "__esModule", {
+					value: true
+				});
+				// 1. 工具函数定义
+				/**
+				 * 模块默认导出适配函数
+				 * @param {*} module - 导入的模块
+				 * @returns {Object} - 标准化后的模块对象（兼容__esModule标记）
+				 */
+				function normalizeModule(module) {
+					return module && module.__esModule ? module : {
+						default: module
 					}
 				}
-
-				function a(e, t) {
-					if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function")
-				}
-				Object.defineProperty(t, "__esModule", {
-					value: !0
-				});
-				var o = function() {
-						function e(e, t) {
-							for (var n = 0; n < t.length; n++) {
-								var i = t[n];
-								i.enumerable = i.enumerable || !1, i.configurable = !0, "value" in i && (i
-									.writable = !0), Object.defineProperty(
-									e, i.key, i)
+				const classDecorator = (function() {
+					function defineProperties(target, props) {
+						for (let i = 0; i < props.length; i++) {
+							const descriptor = props[i];
+							descriptor.enumerable = descriptor.enumerable || false;
+							descriptor.configurable = true;
+							if ("value" in descriptor) {
+								descriptor.writable = true;
+							}
+							Object.defineProperty(target, descriptor.key, descriptor);
+						}
+					}
+					// 直接返回原内层的核心处理函数
+					return function(Constructor, protoProps, staticProps) {
+						if (protoProps) {
+							defineProperties(Constructor.prototype, protoProps);
+						}
+						if (staticProps) {
+							defineProperties(Constructor, staticProps);
+						}
+						return Constructor;
+					}
+				})();
+				// 2. 模块导入
+				const module8 = n(8);
+				const normalizedModule8 = normalizeModule(module8);
+				const module0 = n(0);
+				const normalizedModule0 = normalizeModule(module0);
+				const module12 = n(12);
+				const normalizedModule12 = normalizeModule(module12);
+				const module14 = n(14);
+				const normalizedModule14 = normalizeModule(module14);
+				const module15 = n(15);
+				const normalizedModule15 = normalizeModule(module15);
+				const module2 = n(2);
+				const normalizedModule2 = normalizeModule(module2);
+				const module35 = n(35);
+				const normalizedModule35 = normalizeModule(module35);
+				const module36 = n(36);
+				const normalizedModule36 = normalizeModule(module36);
+				const module37 = n(37);
+				const normalizedModule37 = normalizeModule(module37);
+				const module38 = n(38);
+				const normalizedModule38 = normalizeModule(module38);
+				const module39 = n(39);
+				const normalizedModule39 = normalizeModule(module39);
+				const module40 = n(40);
+				const normalizedModule40 = normalizeModule(module40);
+				const module41 = n(41);
+				const normalizedModule41 = normalizeModule(module41);
+				const module42 = n(42);
+				const normalizedModule42 = normalizeModule(module42);
+				const module43 = n(43);
+				const normalizedModule43 = normalizeModule(module43);
+				const module45 = n(45);
+				const normalizedModule45 = normalizeModule(module45);
+				const module46 = n(46);
+				const normalizedModule46 = normalizeModule(module46);
+				const module47 = n(47);
+				const normalizedModule47 = normalizeModule(module47);
+				const module48 = n(48);
+				const normalizedModule48 = normalizeModule(module48);
+				const module49 = n(49);
+				const normalizedModule49 = normalizeModule(module49);
+				const module4 = n(4);
+				const normalizedModule4 = normalizeModule(module4);
+				// 3. 全局状态变量（播放器实例计数和实例列表）
+				let playerIndex = 0;
+				const playerInstances = [];
+				// 4. 核心播放器类
+				const HjPlayer = (function() {
+					/**
+					 * 播放器构造函数
+					 * @param {Object} options - 播放器配置项
+					 */
+					function Player(options) {
+						const self = this;
+						// 校验类实例化方式
+						if (!(this instanceof Player)) {
+							throw new TypeError("Cannot call a class as a function");
+						}
+						// 初始化配置
+						this.options = normalizedModule12.default(options);
+						// 质量配置初始化
+						if (this.options.video.quality) {
+							this.qualityIndex = this.options.video.defaultQuality;
+							this.quality = this.options.video.quality[this.options.video
+								.defaultQuality];
+						}
+						// 国际化实例
+						this.tran = new normalizedModule14.default(this.options.lang).tran;
+						// 事件管理器
+						this.events = new normalizedModule36.default();
+						// 用户配置
+						this.user = new normalizedModule38.default(this);
+						// 容器元素
+						this.container = this.options.container;
+						// 容器样式初始化
+						this.initContainerStyles();
+						// 模板渲染
+						this.arrow = this.container.offsetWidth <= 500;
+						if (this.arrow) {
+							this.container.classList.add("hjplayer-arrow");
+						}
+						this.template = new normalizedModule15.default({
+							container: this.container,
+							options: this.options,
+							index: playerIndex,
+							tran: this.tran
+						});
+						// 核心组件初始化
+						this.initCoreComponents();
+						// 焦点管理
+						this.initFocusManager();
+						// 状态初始化
+						this.paused = true;
+						this.ended = false;
+						this.switchingQuality = false;
+						// 辅助组件初始化
+						this.initAuxiliaryComponents();
+						// 视频初始化
+						this.initVideo(
+							this.video,
+							this.quality && this.quality.type || this.options.video.type
+						);
+						// 信息面板
+						this.infoPanel = new normalizedModule49.default(this);
+						// 自动播放处理（无弹幕时）
+						if (!this.danmaku && this.options.autoplay) {
+							this.play();
+						}
+						// 实例计数和存储
+						playerIndex++;
+						playerInstances.push(this);
+					}
+					// 使用类装饰器定义原型方法
+					return classDecorator(Player, [{
+						key: "initContainerStyles",
+						value: function() {
+							// 基础样式
+							this.container.classList.add("hjplayer");
+							// 无弹幕样式
+							if (!this.options.danmaku) {
+								this.container.classList.add("hjplayer-no-danmaku");
+							}
+							// 直播模式样式
+							if (this.options.live) {
+								this.container.classList.add("hjplayer-live");
+							}
+							// 移动端样式
+							if (normalizedModule0.default.isMobile) {
+								this.container.classList.add("hjplayer-mobile");
 							}
 						}
-						return function(t, n, i) {
-							return n && e(t.prototype, n), i && e(t, i), t
+					}, {
+						key: "initCoreComponents",
+						value: function() {
+							// 视频元素
+							this.video = this.template.video;
+							// 进度条
+							this.bar = new normalizedModule40.default(this.template);
+							// 提示框
+							this.bezel = new normalizedModule42.default(this.template
+								.bezel);
+							// 全屏控制
+							this.fullScreen = new normalizedModule37.default(this);
+							// 控制器
+							this.controller = new normalizedModule43.default(this);
+							// 弹幕和评论初始化
+							if (this.options.danmaku) {
+								this.initDanmakuAndComment();
+							}
 						}
-					}(),
-					s = n(8),
-					r = i(s),
-					l = n(0),
-					c = i(l),
-					u = n(12),
-					d = i(u),
-					p = n(14),
-					h = i(p),
-					y = n(15),
-					m = i(y),
-					f = n(2),
-					v = i(f),
-					g = n(35),
-					b = i(g),
-					k = n(36),
-					w = i(k),
-					x = n(37),
-					S = i(x),
-					T = n(38),
-					L = i(T),
-					M = n(39),
-					_ = i(M),
-					q = n(40),
-					E = i(q),
-					B = n(41),
-					P = i(B),
-					C = n(42),
-					O = i(C),
-					z = n(43),
-					F = i(z),
-					I = n(45),
-					j = i(I),
-					D = n(46),
-					W = i(D),
-					H = n(47),
-					A = i(H),
-					V = n(48),
-					R = i(V),
-					X = n(49),
-					N = i(X),
-					U = n(4),
-					$ = i(U),
-					Q = 0,
-					J = [],
-					Y = function() {
-						function e(t) {
-							var n = this;
-							a(this, e), this.options = (0, d.default)(t), this.options.video.quality && (this
-									.qualityIndex = this.options.video
-									.defaultQuality, this.quality = this.options.video.quality[this.options
-										.video.defaultQuality]), this.tran =
-								new h.default(this.options.lang).tran, this.events = new w.default, this.user =
-								new L.default(this), this.container =
-								this.options.container, this.container.classList.add("hjplayer"), this.options
-								.danmaku || this.container.classList
-								.add("hjplayer-no-danmaku"), this.options.live && this.container.classList.add(
-									"hjplayer-live"), c.default.isMobile &&
-								this.container.classList.add("hjplayer-mobile"), this.arrow = this.container
-								.offsetWidth <= 500, this.arrow &&
-								this.container.classList.add("hjplayer-arrow"), this.template = new m.default({
-									container: this.container,
-									options: this.options,
-									index: Q,
-									tran: this.tran
-								}), this.video = this.template.video, this.bar = new E.default(this.template),
-								this.bezel = new O.default(
-									this.template.bezel), this.fullScreen = new S.default(this), this
-								.controller = new F.default(this), this.options
-								.danmaku && (this.danmaku = new b.default({
-									container: this.template.danmaku,
-									opacity: this.user.get("opacity"),
-									callback: function() {
+					}, {
+						key: "initDanmakuAndComment",
+						value: function() {
+							const self = this;
+							// 弹幕实例
+							this.danmaku = new normalizedModule35.default({
+								container: this.template.danmaku,
+								opacity: this.user.get("opacity"),
+								callback: function() {
+									setTimeout(function() {
+										self.template.danmakuLoading
+											.style.display = "none";
 										setTimeout(function() {
-											n.template.danmakuLoading.style.display =
-												"none", setTimeout(function() {
-													document.getElementById(
-															'link2-success').style
-														.display = "block"
-												}, 1 * 1500), n.options.autoplay && n.play()
-										}, 0)
-									},
-									error: function(e) {
-										document.getElementById('link2-success').remove(),
-											setTimeout(function() {
-												document.getElementById('link2-error').style
-													.display = "block"
-											}, 1 * 1000), n.notice(e)
-									},
-									apiBackend: this.options.apiBackend,
-									borderColor: this.options.theme,
-									height: this.arrow ? 24 : 30,
-									time: function() {
-										return n.video.currentTime
-									},
-									unlimited: this.user.get("unlimited"),
-									api: {
-										id: this.options.danmaku.id,
-										address: this.options.danmaku.api,
-										token: this.options.danmaku.token,
-										maximum: this.options.danmaku.maximum,
-										addition: this.options.danmaku.addition,
-										user: this.options.danmaku.user
-									},
-									events: this.events
-								}), this.comment = new W.default(this)), this.setting = new j.default(this),
-								document.addEventListener(
-									"click",
-									function() {
-										n.focus = !1
-									}, !0), this.container.addEventListener("click", function() {
-									n.focus = !0
-								}, !0), this.paused = !0, this.time = new P.default(this), this.hotkey = new A
-								.default(this), this.contextmenu =
-								new R.default(this), this.initVideo(this.video, this.quality && this.quality
-									.type || this.options.video.type),
-								this.infoPanel = new N.default(this), !this.danmaku && this.options.autoplay &&
-								this.play(), Q++, J.push(this)
+											const
+												successElement =
+												document
+												.getElementById(
+													'link2-success'
+												);
+											if (
+												successElement
+											) {
+												successElement
+													.style
+													.display =
+													"block";
+											}
+										}, 1500);
+										if (self.options.autoplay) {
+											self.play();
+										}
+									}, 0);
+								},
+								error: function(error) {
+									const successElement = document
+										.getElementById('link2-success');
+									if (successElement) {
+										successElement.remove();
+									}
+									setTimeout(function() {
+										const errorElement =
+											document.getElementById(
+												'link2-error');
+										if (errorElement) {
+											errorElement.style
+												.display = "block";
+										}
+									}, 1000);
+									self.notice(error);
+								},
+								apiBackend: this.options.apiBackend,
+								borderColor: this.options.theme,
+								height: this.arrow ? 24 : 30,
+								time: function() {
+									return self.video.currentTime;
+								},
+								unlimited: this.user.get("unlimited"),
+								api: {
+									id: this.options.danmaku.id,
+									address: this.options.danmaku.api,
+									token: this.options.danmaku.token,
+									maximum: this.options.danmaku.maximum,
+									addition: this.options.danmaku.addition,
+									user: this.options.danmaku.user
+								},
+								events: this.events
+							});
+							// 评论实例
+							this.comment = new normalizedModule46.default(this);
 						}
-						return o(e, [{
-							key: "seek",
-							value: function(e) {
-								e = Math.max(e, 0), this.video.duration && (e = Math.min(e, this
-										.video.duration)), this.video.currentTime <
-									e ? this.notice(this.tran("FF") + " " + (e - this.video
-										.currentTime).toFixed(0) + " " + this.tran("s")) :
-									this.video.currentTime > e && this.notice(this.tran("REW") +
-										" " + (this.video.currentTime - e).toFixed(
-											0) + " " + this.tran("s")), this.video.currentTime =
-									e, this.danmaku && this.danmaku.seek(), this.bar.set(
-										"played", e / this.video.duration, "width")
+					}, {
+						key: "initFocusManager",
+						value: function() {
+							const self = this;
+							// 全局点击失焦
+							document.addEventListener("click", function() {
+								self.focus = false;
+							}, true);
+							// 容器点击聚焦
+							this.container.addEventListener("click", function() {
+								self.focus = true;
+							}, true);
+						}
+					}, {
+						key: "initAuxiliaryComponents",
+						value: function() {
+							// 设置面板
+							this.setting = new normalizedModule45.default(this);
+							// 时间管理器
+							this.time = new normalizedModule41.default(this);
+							// 快捷键
+							this.hotkey = new normalizedModule47.default(this);
+							// 右键菜单
+							this.contextmenu = new normalizedModule48.default(this);
+						}
+					}, {
+						key: "seek",
+						value: function(time) {
+							// 时间边界处理
+							time = Math.max(time, 0);
+							if (this.video.duration) {
+								time = Math.min(time, this.video.duration);
 							}
-						}, {
-							key: "play",
-							value: function() {
-								var e = this;
-								if (this.paused = !1, this.video.paused && this.bezel.switch(v
-										.default.play), this.template.playButton.innerHTML =
-									v.default.pause, r.default.resolve(this.video.play()).catch(
-										function() {
-											e.pause()
-										}).then(function() {}), this.time.enable("loading"),
-									this.time.enable("progress"), this.container.classList
-									.remove("hjplayer-paused"), this.container.classList.add(
-										"hjplayer-playing"), this.danmaku && this.danmaku
-									.play(), this.options.mutex)
-									for (var t = 0; t < J.length; t++) this !== J[t] && J[t]
-										.pause()
+							// 提示信息
+							if (this.video.currentTime < time) {
+								this.notice(this.tran("FF") + " " + (time - this.video
+									.currentTime).toFixed(0) + " " + this.tran(
+									"s"));
+							} else if (this.video.currentTime > time) {
+								this.notice(this.tran("REW") + " " + (this.video
+										.currentTime - time).toFixed(0) + " " + this
+									.tran("s"));
 							}
-						}, {
-							key: "pause",
-							value: function() {
-								this.paused = !0, this.container.classList.remove(
-										"hjplayer-loading"), this.video.paused || this.bezel
-									.switch(
-										v.default.pause), this.ended = !1, this.template
-									.playButton.innerHTML = v.default.play, this.video.pause(),
-									this.time.disable("loading"), this.time.disable("progress"),
-									this.container.classList.remove(
-										"hjplayer-playing"), this.container.classList.add(
-										"hjplayer-paused"), this.danmaku && this.danmaku
-									.pause()
+							// 设置播放时间
+							this.video.currentTime = time;
+							// 弹幕同步
+							if (this.danmaku) {
+								this.danmaku.seek();
 							}
-						}, {
-							key: "switchVolumeIcon",
-							value: function() {
-								this.volume() >= .95 ? this.template.volumeIcon.innerHTML = v
-									.default.volumeUp : this.volume() > 0 ? this
-									.template.volumeIcon.innerHTML = v.default.volumeDown : this
-									.template.volumeIcon.innerHTML = v.default.volumeOff
+							// 进度条同步
+							this.bar.set("played", this.video.currentTime / this.video
+								.duration, "width");
+						}
+					}, {
+						key: "play",
+						value: function() {
+							const self = this;
+							// 更新播放状态
+							this.paused = false;
+							// 更新UI
+							if (this.video.paused) {
+								this.bezel.switch(normalizedModule2.default.play);
 							}
-						}, {
-							key: "volume",
-							value: function(e, t, n) {
-								if (e = parseFloat(e), !isNaN(e)) {
-									e = Math.max(e, 0), e = Math.min(e, 1), this.bar.set(
-										"volume", e, "width");
-									var i = (100 * e).toFixed(0) + "%";
-									this.template.volumeBarWrapWrap.dataset.balloon = i, t ||
-										this.user.set("volume", e), n || this.notice(
-											this.tran("Volume") + " " + (100 * e).toFixed(0) +
-											"%"), this.video.volume = e, this.video.muted && (
-											this.video.muted = !1), this.switchVolumeIcon()
+							this.template.playButton.innerHTML = normalizedModule2
+								.default.pause;
+							// 播放视频（兼容Promise）
+							normalizedModule8.default.resolve(this.video.play()).catch(
+								function() {
+									self.pause();
+								}).then(function() {});
+							// 启用时间监控
+							this.time.enable("loading");
+							this.time.enable("progress");
+							// 更新容器样式
+							this.container.classList.remove("hjplayer-paused");
+							this.container.classList.add("hjplayer-playing");
+							// 弹幕同步播放
+							if (this.danmaku) {
+								this.danmaku.play();
+							}
+							// 互斥播放（同一页面仅一个播放器播放）
+							if (this.options.mutex) {
+								const len = playerInstances.length;
+								for (let i = 0; i < len; i++) {
+									if (this !== playerInstances[i]) {
+										playerInstances[i].pause();
+									}
 								}
-								return this.video.volume
 							}
-						}, {
-							key: "toggle",
-							value: function() {
-								this.video.paused ? this.play() : this.pause()
+						}
+					}, {
+						key: "pause",
+						value: function() {
+							// 更新暂停状态
+							this.paused = true;
+							this.ended = false;
+							// 更新UI
+							this.container.classList.remove("hjplayer-loading");
+							if (!this.video.paused) {
+								this.bezel.switch(normalizedModule2.default.pause);
 							}
-						}, {
-							key: "on",
-							value: function(e, t) {
-								this.events.on(e, t)
+							this.template.playButton.innerHTML = normalizedModule2
+								.default.play;
+							// 暂停视频
+							this.video.pause();
+							// 禁用时间监控
+							this.time.disable("loading");
+							this.time.disable("progress");
+							// 更新容器样式
+							this.container.classList.remove("hjplayer-playing");
+							this.container.classList.add("hjplayer-paused");
+							// 弹幕同步暂停
+							if (this.danmaku) {
+								this.danmaku.pause();
 							}
-						}, {
-							key: "switchVideo",
-							value: function(e, t) {
-								this.pause(), this.video.poster = e.pic ? e.pic : "", this.video
-									.src = e.url, this.initMSE(this.video, e.type ||
-										"auto"), t && (this.template.danmakuLoading.style
-										.display = "block", this.bar.set("played", 0, "width"),
-										this.bar.set("loaded", 0, "width"), this.template.ptime
-										.innerHTML = "00:00", this.template.danmaku.innerHTML =
-										"", this.danmaku && this.danmaku.reload({
-											id: t.id,
-											address: t.api,
-											token: t.token,
-											maximum: t.maximum,
-											addition: t.addition,
-											user: t.user
-										}))
+						}
+					}, {
+						key: "switchVolumeIcon",
+						value: function() {
+							// 根据音量切换图标
+							const volume = this.volume();
+							if (volume >= 0.95) {
+								this.template.volumeIcon.innerHTML = normalizedModule2
+									.default.volumeUp;
+							} else if (volume > 0) {
+								this.template.volumeIcon.innerHTML = normalizedModule2
+									.default.volumeDown;
+							} else {
+								this.template.volumeIcon.innerHTML = normalizedModule2
+									.default.volumeOff;
 							}
-						}, {
-							key: "initMSE",
-							value: function(e, t) {
-								var n = this;
-								if (this.type = t, this.options.video.customType && this.options
-									.video.customType[t]) "[object Function]" ===
-									Object.prototype.toString.call(this.options.video
-										.customType[t]) ? this.options.video.customType[t](this
-										.video, this) : console.error("Illegal customType: " +
-										t);
-								else switch ("auto" === this.type && (/m3u8(#|\?|$)/i.exec(e
-											.src) ? this.type = "hls" : /.flv(#|\?|$)/i
-										.exec(
-											e.src) ? this.type = "flv" : /.mpd(#|\?|$)/i
-										.exec(e.src) ? this.type = "dash" : this.type =
-										"normal"),
-									this.type) {
+						}
+					}, {
+						key: "volume",
+						value: function(volume, skipSave, skipNotice) {
+							// 音量值处理
+							volume = parseFloat(volume);
+							if (!isNaN(volume)) {
+								// 边界限制
+								volume = Math.max(volume, 0);
+								volume = Math.min(volume, 1);
+								// 更新音量条
+								this.bar.set("volume", volume, "width");
+								// 音量提示文本
+								const volumeText = (100 * volume).toFixed(0) + "%";
+								this.template.volumeBarWrapWrap.dataset.balloon =
+									volumeText;
+								// 保存用户配置（可选）
+								if (!skipSave) {
+									this.user.set("volume", volume);
+								}
+								// 音量提示（可选）
+								if (!skipNotice) {
+									this.notice(this.tran("Volume") + " " + volumeText);
+								}
+								// 设置视频音量
+								this.video.volume = volume;
+								if (this.video.muted) {
+									this.video.muted = false;
+								}
+								// 切换音量图标
+								this.switchVolumeIcon();
+							}
+							// 返回当前音量
+							return this.video.volume;
+						}
+					}, {
+						key: "toggle",
+						value: function() {
+							// 播放/暂停切换
+							this.video.paused ? this.play() : this.pause();
+						}
+					}, {
+						key: "on",
+						value: function(eventName, callback) {
+							// 事件绑定代理
+							this.events.on(eventName, callback);
+						}
+					}, {
+						key: "switchVideo",
+						value: function(videoInfo, danmakuInfo) {
+							// 暂停当前播放
+							this.pause();
+							// 更新视频封面
+							this.video.poster = videoInfo.pic || "";
+							// 更新视频地址
+							this.video.src = videoInfo.url;
+							// 初始化MSE
+							this.initMSE(this.video, videoInfo.type || "auto");
+							// 弹幕信息更新（可选）
+							if (danmakuInfo) {
+								this.template.danmakuLoading.style.display = "block";
+								this.bar.set("played", 0, "width");
+								this.bar.set("loaded", 0, "width");
+								this.template.ptime.innerHTML = "00:00";
+								this.template.danmaku.innerHTML = "";
+								if (this.danmaku) {
+									this.danmaku.reload({
+										id: danmakuInfo.id,
+										address: danmakuInfo.api,
+										token: danmakuInfo.token,
+										maximum: danmakuInfo.maximum,
+										addition: danmakuInfo.addition,
+										user: danmakuInfo.user
+									});
+								}
+							}
+						}
+					}, {
+						key: "initMSE",
+						value: function(videoElement, mediaType) {
+							const self = this;
+							this.type = mediaType;
+							// 自定义媒体类型处理
+							if (this.options.video.customType && this.options.video
+								.customType[this.type]) {
+								const customHandler = this.options.video.customType[this
+									.type];
+								if (Object.prototype.toString.call(customHandler) ===
+									"[object Function]") {
+									customHandler(this.video, this);
+								} else {
+									console.error("Illegal customType: " + this.type);
+								}
+							} else {
+								// 自动识别媒体类型
+								if (this.type === "auto") {
+									if (/m3u8(#|\?|$)/i.exec(videoElement.src)) {
+										this.type = "hls";
+									} else if (/.flv(#|\?|$)/i.exec(videoElement.src)) {
+										this.type = "flv";
+									} else if (/.mpd(#|\?|$)/i.exec(videoElement.src)) {
+										this.type = "dash";
+									} else {
+										this.type = "normal";
+									}
+								}
+								// 不同媒体类型的初始化
+								switch (this.type) {
 									case "hls":
-										if (Hls)
+										if (window.Hls) {
 											if (Hls.isSupported()) {
-												var i = new Hls;
-												i.loadSource(e.src), i.attachMedia(e)
-											} else this.notice(
-												"Error: Hls is not supported.");
-										else this.notice("Error: Can't find Hls.");
+												const hls = new Hls();
+												hls.loadSource(videoElement.src);
+												hls.attachMedia(videoElement);
+											} else {
+												this.notice(
+													"Error: Hls is not supported.");
+											}
+										} else {
+											this.notice("Error: Can't find Hls.");
+										}
 										break;
 									case "flv":
-										if (flvjs && flvjs.isSupported())
+										if (window.flvjs) {
 											if (flvjs.isSupported()) {
-												var a = flvjs.createPlayer({
+												const flvPlayer = flvjs.createPlayer({
 													type: "flv",
-													url: e.src
+													url: videoElement.src
 												});
-												a.attachMediaElement(e), a.load()
-											} else this.notice(
-												"Error: flvjs is not supported.");
-										else this.notice("Error: Can't find flvjs.");
+												flvPlayer.attachMediaElement(
+													videoElement);
+												flvPlayer.load();
+											} else {
+												this.notice(
+													"Error: flvjs is not supported."
+												);
+											}
+										} else {
+											this.notice("Error: Can't find flvjs.");
+										}
 										break;
 									case "dash":
-										dashjs ? dashjs.MediaPlayer().create().initialize(e,
-											e.src, !1) : this.notice(
-											"Error: Can't find dashjs.");
+										if (window.dashjs) {
+											dashjs.MediaPlayer().create().initialize(
+												videoElement, videoElement.src,
+												false);
+										} else {
+											this.notice("Error: Can't find dashjs.");
+										}
 										break;
 									case "webtorrent":
-										if (WebTorrent)
+										if (window.WebTorrent) {
 											if (WebTorrent.WEBRTC_SUPPORT) {
 												this.container.classList.add(
 													"hjplayer-loading");
-												var o = new WebTorrent,
-													s = e.src;
-												o.add(s, function(e) {
-													e.files.find(function(e) {
-														return e.name
-															.endsWith(
-																".mp4")
-													}).renderTo(n.video, {
-														autoplay: n.options
-															.autoplay
-													}, function() {
-														n.container
-															.classList
-															.remove(
-																"hjplayer-loading"
-															)
-													})
-												})
-											} else this.notice(
-												"Error: Webtorrent is not supported.");
-										else this.notice("Error: Can't find Webtorrent.")
+												const client = new WebTorrent();
+												const torrentUrl = videoElement.src;
+												client.add(torrentUrl, function(
+													torrent) {
+													const mp4File = torrent
+														.files.find(function(
+															file) {
+															return file.name
+																.endsWith(
+																	".mp4");
+														});
+													mp4File.renderTo(self
+														.video, {
+															autoplay: self
+																.options
+																.autoplay
+														},
+														function() {
+															self.container
+																.classList
+																.remove(
+																	"hjplayer-loading"
+																);
+														});
+												});
+											} else {
+												this.notice(
+													"Error: Webtorrent is not supported."
+												);
+											}
+										} else {
+											this.notice(
+												"Error: Can't find Webtorrent.");
+										}
+										break;
+									default:
+										// 普通视频类型，无需额外初始化
+										break;
 								}
 							}
-						}, {
-							key: "initVideo",
-							value: function(e, t) {
-								var n = this;
-								this.initMSE(e, t), this.on("durationchange", function() {
-									1 !== e.duration && (n.template.dtime.innerHTML = c
-										.default.secondToTime(e.duration))
-								}), this.on("progress", function() {
-									var t = e.buffered.length ? e.buffered.end(e
-										.buffered.length - 1) / e.duration : 0;
-									n.bar.set("loaded", t, "width")
-								}), this.on("error", function() {
-									setTimeout(function() {
-										document.getElementById('link3-error')
-											.style.display = "block"
-									}, 5 * 1000), n.tran && n.notice && (n.type, n
-										.notice(n.tran("This video fails to load"),
-											-1))
-								}), this.ended = !1, this.on("ended", function() {
-									n.bar.set("played", 1, "width"), n.setting.loop ? (n
-											.seek(0), e.play()) : (n.ended = !0, n
-											.pause()), n
-										.danmaku && (n.danmaku.danIndex = 0)
-								}), this.on("play", function() {
-									n.paused && n.play()
-								}), this.on("pause", function() {
-									n.paused || n.pause()
-								});
-								for (var i = 0; i < this.events.videoEvents.length; i++) !
-									function(t) {
-										e.addEventListener(n.events.videoEvents[t], function() {
-											n.events.trigger(n.events.videoEvents[t])
-										})
-									}(i);
-								this.volume(this.user.get("volume"), !0, !0), this.options
-									.subtitle && (this.subtitle = new _.default(
-											this.template.subtitle, this.video, this.options
-											.subtitle, this.events), this.user.get(
-											"subtitle") ||
-										this.subtitle.hide())
-							}
-						}, {
-							key: "switchQuality",
-							value: function(e) {
-								var t = this;
-								if (this.qualityIndex !== e && !this.switchingQuality) {
-									this.qualityIndex = e, this.switchingQuality = !0, this
-										.quality = this.options.video.quality[e], this.template
-										.qualityButton.innerHTML = this.quality.name;
-									var n = this.video.paused;
-									this.video.pause();
-									var i = (0, $.default)({
-											current: !1,
-											pic: null,
-											screenshot: this.options.screenshot,
-											preload: "auto",
-											url: this.quality.url,
-											subtitle: this.options.subtitle
-										}),
-										a = (new DOMParser).parseFromString(i, "text/html").body
-										.firstChild;
-									this.template.videoWrap.insertBefore(a, this.template
-											.videoWrap.getElementsByTagName("div")[0]), this
-										.prevVideo =
-										this.video, this.video = a, this.initVideo(this.video,
-											this.quality.type || this.options.video.type),
-										this.seek(this.prevVideo.currentTime), this.notice(this
-											.tran("Switching to") + " " + this.quality.name +
-											" " + this.tran("quality"), -1), this.events
-										.trigger("quality_start", this.quality), this.on(
-											"canplay",
-											function() {
-												if (t.prevVideo) {
-													if (t.video.currentTime !== t.prevVideo
-														.currentTime) return void t.seek(t
-														.prevVideo.currentTime);
-													t.template.videoWrap.removeChild(t
-															.prevVideo), t.video.classList.add(
-															"hjplayer-video-current"), n ||
-														t.video.play(), t.prevVideo = null, t
-														.notice(t.tran("Switched to") + " " + t
-															.quality.name + " " + t
-															.tran("quality")), t
-														.switchingQuality = !1, t.events
-														.trigger("quality_end")
-												}
-											})
+						}
+					}, {
+						key: "initVideo",
+						value: function(videoElement, mediaType) {
+							const self = this;
+							// 初始化MSE
+							this.initMSE(videoElement, mediaType);
+							// 绑定时长变化事件
+							this.on("durationchange", function() {
+								if (videoElement.duration !== 1) {
+									self.template.dtime.innerHTML =
+										normalizedModule0.default.secondToTime(
+											videoElement.duration);
 								}
-							}
-						}, {
-							key: "notice",
-							value: function(e) {
-								var t = this,
-									n = arguments.length > 1 && void 0 !== arguments[1] ?
-									arguments[1] : 2e3,
-									i = arguments.length > 2 && void 0 !== arguments[2] ?
-									arguments[2] : .8;
-								this.template.notice.innerHTML = e, this.template.notice.style
-									.opacity = i, this.noticeTime &&
-									clearTimeout(this.noticeTime), this.events.trigger(
-										"notice_show", e), this.noticeTime = setTimeout(
+							});
+							// 绑定进度更新事件
+							this.on("progress", function() {
+								const loadedRatio = videoElement.buffered
+									.length ? videoElement.buffered.end(
+										videoElement.buffered.length - 1) /
+									videoElement.duration : 0;
+								self.bar.set("loaded", loadedRatio, "width");
+							});
+							// 绑定错误事件
+							this.on("error", function() {
+								setTimeout(function() {
+									const errorElement = document
+										.getElementById('link3-error');
+									if (errorElement) {
+										errorElement.style.display =
+											"block";
+									}
+								}, 5000);
+								if (self.tran && self.notice) {
+									self.notice(self.tran(
+										"This video fails to load"), -1);
+								}
+							});
+							// 绑定播放结束事件
+							this.on("ended", function() {
+								self.bar.set("played", 1, "width");
+								if (self.setting.loop) {
+									self.seek(0);
+									videoElement.play();
+								} else {
+									self.ended = true;
+									self.pause();
+								}
+								if (self.danmaku) {
+									self.danmaku.danIndex = 0;
+								}
+							});
+							// 绑定播放事件
+							this.on("play", function() {
+								if (self.paused) {
+									self.play();
+								}
+							});
+							// 绑定暂停事件
+							this.on("pause", function() {
+								if (!self.paused) {
+									self.pause();
+								}
+							});
+							// 批量绑定视频原生事件
+							const len = this.events.videoEvents.length;
+							for (let i = 0; i < len; i++) {
+								(function(index) {
+									const eventName = self.events.videoEvents[
+										index];
+									videoElement.addEventListener(eventName,
 										function() {
-											t.template.notice.style.opacity = 0, t.events
-												.trigger("notice_hide")
-										}, n)
+											self.events.trigger(eventName);
+										});
+								})(i);
 							}
-						}, {
-							key: "resize",
-							value: function() {
-								this.danmaku && this.danmaku.resize(), this.events.trigger(
-									"resize")
+							// 初始化音量
+							this.volume(this.user.get("volume"), true, true);
+							// 字幕初始化
+							if (this.options.subtitle) {
+								this.subtitle = new normalizedModule39.default(
+									this.template.subtitle,
+									this.video,
+									this.options.subtitle,
+									this.events
+								);
+								if (!this.user.get("subtitle")) {
+									this.subtitle.hide();
+								}
 							}
-						}, {
-							key: "speed",
-							value: function(e) {
-								this.video.playbackRate = e
+						}
+					}, {
+						key: "switchQuality",
+						value: function(newQualityIndex) {
+							const self = this;
+							// 跳过无效切换（当前画质或正在切换中）
+							if (this.qualityIndex === newQualityIndex || this
+								.switchingQuality) {
+								return;
 							}
-						}, {
-							key: "destroy",
-							value: function() {
-								J.splice(J.indexOf(this), 1), this.pause(), this.controller
-									.destroy(), this.time.destroy(), this.video.src =
-									"", this.container.innerHTML = "", this.events.trigger(
-										"destroy");
-								for (var e in this) this.hasOwnProperty(e) && "paused" !== e &&
-									delete this[e]
+							// 更新画质状态
+							this.qualityIndex = newQualityIndex;
+							this.switchingQuality = true;
+							this.quality = this.options.video.quality[newQualityIndex];
+							this.template.qualityButton.innerHTML = this.quality.name;
+							this.video.pause();
+							// 构建并解析新视频元素
+							const newVideoElement = new DOMParser().parseFromString(
+								normalizedModule4.default({
+									current: false,
+									pic: null,
+									screenshot: this.options.screenshot,
+									preload: "auto",
+									url: this.quality.url,
+									subtitle: this.options.subtitle
+								}), "text/html").body.firstChild;
+							// 插入新视频元素
+							this.template.videoWrap.insertBefore(
+								newVideoElement,
+								this.template.videoWrap.getElementsByTagName("div")[
+									0]
+							);
+							// 记录旧视频元素
+							this.prevVideo = this.video;
+							this.video = newVideoElement;
+							// 初始化新视频
+							this.initVideo(
+								this.video,
+								this.quality.type || this.options.video.type
+							);
+							// 同步播放进度
+							this.seek(this.prevVideo.currentTime);
+							// 提示用户
+							this.notice(this.tran("Switching to") + " " + this.quality
+								.name + " " + this.tran("quality"), -1);
+							this.events.trigger("quality_start", this.quality);
+							// 新视频可播放时的处理
+							this.on("canplay", function() {
+								if (!self.prevVideo) {
+									return;
+								}
+								// 同步进度（避免偏差）
+								if (self.video.currentTime !== self.prevVideo
+									.currentTime) {
+									return self.seek(self.prevVideo
+										.currentTime);
+								}
+								// 移除旧视频
+								self.template.videoWrap.removeChild(self
+									.prevVideo);
+								// 标记新视频为当前视频
+								self.video.classList.add(
+									"hjplayer-video-current");
+								// 恢复播放状态
+								if (!this.video.paused) {
+									self.video.play();
+								}
+								// 清理状态
+								self.prevVideo = null;
+								// 提示切换完成
+								self.notice(self.tran("Switched to") + " " +
+									self.quality.name + " " + self.tran(
+										"quality"));
+								self.switchingQuality = false;
+								self.events.trigger("quality_end");
+							});
+						}
+					}, {
+						key: "notice",
+						value: function(message, duration, opacity) {
+							const self = this;
+							// 默认参数处理
+							duration = arguments.length > 1 && typeof arguments[1] !==
+								"undefined" ? arguments[1] : 2000;
+							opacity = arguments.length > 2 && typeof arguments[2] !==
+								"undefined" ? arguments[2] : 0.8;
+							// 更新提示内容和样式
+							this.template.notice.innerHTML = message;
+							this.template.notice.style.opacity = opacity;
+							// 清除旧的定时器
+							if (this.noticeTime) {
+								clearTimeout(this.noticeTime);
 							}
-						}]), e
-					}();
-				t.default = Y
+							// 触发提示显示事件
+							this.events.trigger("notice_show", message);
+							// 设置隐藏定时器
+							this.noticeTime = setTimeout(function() {
+								self.template.notice.style.opacity = 0;
+								self.events.trigger("notice_hide");
+							}, duration);
+						}
+					}, {
+						key: "resize",
+						value: function() {
+							// 弹幕大小调整
+							if (this.danmaku) {
+								this.danmaku.resize();
+							}
+							// 触发调整事件
+							this.events.trigger("resize");
+						}
+					}, {
+						key: "speed",
+						value: function(playbackRate) {
+							// 设置播放速度
+							this.video.playbackRate = playbackRate;
+						}
+					}, {
+						key: "destroy",
+						value: function() {
+							// 从实例列表中移除
+							const instanceIndex = playerInstances.indexOf(this);
+							if (instanceIndex > -1) {
+								playerInstances.splice(instanceIndex, 1);
+							}
+							// 暂停播放
+							this.pause();
+							// 销毁组件
+							if (this.controller) {
+								this.controller.destroy();
+							}
+							if (this.time) {
+								this.time.destroy();
+							}
+							// 清理视频资源
+							this.video.src = "";
+							this.container.innerHTML = "";
+							// 触发销毁事件
+							this.events.trigger("destroy");
+							// 清理实例属性（保留paused属性）
+							for (const key in this) {
+								if (this.hasOwnProperty(key) && key !== "paused") {
+									delete this[key];
+								}
+							}
+						}
+					}], []);
+				})();
+				// 导出默认播放器类
+				t.default = HjPlayer;
 			},
-			// -----------------------------------------------------------------
 			function(exports, module, require) {
 				(function(setImmediateFunc) {
 					// 空函数，用于 Promise 构造函数的默认占位
@@ -971,6 +1343,7 @@
 					 * @param {Promise} promise Promise 实例
 					 */
 					function flushPromiseCallbacks(promise) {
+						const len = promise._deferreds.length;
 						// 若 Promise 被拒绝且无回调处理，触发未处理拒绝警告
 						if (promise._state === 2 && promise._deferreds.length === 0) {
 							Promise._immediateFn(function() {
@@ -980,7 +1353,7 @@
 							});
 						}
 						// 执行所有延迟对象的回调
-						for (let i = 0, len = promise._deferreds.length; i < len; i++) {
+						for (let i = 0; i < len; i++) {
 							handlePromiseCallback(promise, promise._deferreds[i]);
 						}
 						// 清空回调队列
@@ -1036,7 +1409,7 @@
 					const defaultImmediateFn = setTimeout;
 					// ===== Promise 原型方法 =====
 					/**
-					 * 捕获 Promise 拒绝状态的回调（语法糖，等价于 then(null, onRejected)）
+					 * 捕获 Promise 拒绝状态的回调
 					 * @param {Function} onRejected 拒绝回调
 					 * @returns {Promise} 新的 Promise 实例
 					 */
@@ -1106,7 +1479,7 @@
 							}
 							let remainingCount = resultArray.length;
 							// 遍历处理所有数组项
-							for (let i = 0; i < resultArray.length; i++) {
+							for (let i = 0; i < remainingCount; i++) {
 								handleArrayItem(i, resultArray[i]);
 							}
 						});
@@ -1143,8 +1516,9 @@
 					 */
 					Promise.race = function(promiseArray) {
 						return new Promise(function(resolve, reject) {
+							const len = promiseArray.length;
 							// 遍历所有 Promise，第一个触发状态变更的会决定结果
-							for (let i = 0, len = promiseArray.length; i < len; i++) {
+							for (let i = 0; i < len; i++) {
 								promiseArray[i].then(resolve, reject);
 							}
 						});
@@ -1199,13 +1573,13 @@
 				const originalApply = Function.prototype.apply;
 				// 重写setTimeout，返回自定义TimerInstance实例
 				t.setTimeout = function() {
-					const nativeTimerId = originalApply.call(setTimeout, window, arguments);
-					return new TimerInstance(nativeTimerId, clearTimeout);
+					return new TimerInstance(originalApply.call(setTimeout, window, arguments),
+						clearTimeout);
 				};
 				// 重写setInterval，返回自定义TimerInstance实例
 				t.setInterval = function() {
-					const nativeTimerId = originalApply.call(setInterval, window, arguments);
-					return new TimerInstance(nativeTimerId, clearInterval);
+					return new TimerInstance(originalApply.call(setInterval, window, arguments),
+						clearInterval);
 				};
 				// 统一重写clearTimeout和clearInterval，调用自定义实例的close方法
 				t.clearTimeout = t.clearInterval = function(timerInstance) {
@@ -1232,7 +1606,7 @@
 					target._idleTimeout = -1;
 				};
 				/**
-				 * 激活/取消引用空闲定时器（两个接口复用同一逻辑，保持原代码一致性）
+				 * 激活/取消引用空闲定时器（两个接口复用同一逻辑）
 				 * @param {Object} target - 目标对象
 				 */
 				t._unrefActive = t.active = function(target) {
@@ -1248,7 +1622,7 @@
 						}, idleTimeout);
 					}
 				};
-				// 执行模块加载（原代码的n(10)，保持不变）
+				// 执行模块加载
 				n(10);
 				// 挂载原生setImmediate和clearImmediate到t对象上
 				t.setImmediate = setImmediate;
@@ -1256,31 +1630,27 @@
 			},
 			// 核心：在不支持 setImmediate 的环境下模拟该 API，提供异步立即执行回调能力
 			function(e, t, n) {
-				// 立即执行核心逻辑（合并原嵌套函数与工具函数）
+				// 立即执行核心逻辑
 				(function(global, t) {
 					// 仅在环境不支持 setImmediate 时执行兼容逻辑
 					if (global.setImmediate) return;
-					// 核心状态变量（语义化命名，替代原单字母变量）
+					// 核心状态变量
 					let callbackId = 1; // 回调唯一ID，自增起始值
 					const callbackMap = {}; // 存储回调信息：{ id: { callback: 函数, args: 参数数组 } }
 					let isExecuting = false; // 标记是否正在执行回调，防止重入
 					const doc = global.document; // IE浏览器兼容所需文档对象
 					let nextTickHandler; // 回调调度处理器
 					// -------------- 内部核心工具函数（全部内聚在当前函数内）--------------
-					/**
-					 * 新增立即执行回调（对应原 i 函数，polyfill 的 setImmediate 实现）
-					 */
+					// 立即执行回调
 					function addImmediateCallback(callback) {
 						// 兼容字符串参数，转为 Function 实例
 						if (typeof callback !== 'function') {
 							callback = new Function('' + callback);
 						}
-						// 收集除回调外的所有参数
-						const callbackArgs = Array.prototype.slice.call(arguments, 1);
 						// 存储回调信息并调度执行
 						const callbackInfo = {
 							callback,
-							args: callbackArgs
+							args: Array.prototype.slice.call(arguments, 1)
 						};
 						callbackMap[callbackId] = callbackInfo;
 						nextTickHandler(callbackId);
@@ -1288,15 +1658,11 @@
 						callbackId++;
 						return currentId;
 					}
-					/**
-					 * 清除指定ID的回调（对应原 a 函数，polyfill 的 clearImmediate 实现）
-					 */
+					// 清除指定ID的回调
 					function removeImmediateCallback(id) {
 						delete callbackMap[id];
 					}
-					/**
-					 * 执行单个回调（对应原 o 函数，优化参数传递性能）
-					 */
+					// 执行单个回调
 					function executeCallback(callbackInfo) {
 						const {
 							callback,
@@ -1321,9 +1687,7 @@
 								callback.apply(global, args);
 						}
 					}
-					/**
-					 * 安全执行回调（对应原 s 函数，防止执行重入）
-					 */
+					// 安全执行回调
 					function safeExecuteCallback(id) {
 						if (isExecuting) {
 							setTimeout(() => safeExecuteCallback(id), 0);
@@ -1358,7 +1722,6 @@
 						};
 						global.postMessage("", "*");
 						global.onmessage = originalOnMessage;
-
 						if (isPostMessageUsable) {
 							const messagePrefix = "setImmediate$" + Math.random() + "$";
 							const messageHandler = function(e) {
@@ -1445,29 +1808,6 @@
 						}
 					}
 				}
-				// 安全执行 clearTimeout（兼容不同调用方式）
-				function safeClearTimeout(timeoutId) {
-					// 若已指向原生 clearTimeout，直接调用
-					if (clearTimeoutFunc === clearTimeout) {
-						return clearTimeout(timeoutId);
-					}
-					// 若 clearTimeoutFunc 未初始化或为异常函数，且原生 clearTimeout 存在，先初始化
-					if ((clearTimeoutFunc === throwClearTimeoutUndefinedError || !clearTimeoutFunc) &&
-						clearTimeout) {
-						clearTimeoutFunc = clearTimeout;
-						return clearTimeout(timeoutId);
-					}
-					// 尝试多种调用方式兼容不同环境
-					try {
-						return clearTimeoutFunc(timeoutId);
-					} catch (error) {
-						try {
-							return clearTimeoutFunc.call(null, timeoutId);
-						} catch (error) {
-							return clearTimeoutFunc.call(this, timeoutId);
-						}
-					}
-				}
 				// 批量执行回调队列的后续逻辑（重置状态 + 处理剩余回调）
 				function flushCallbackQueue() {
 					// 若处于执行中且存在待处理回调队列，执行后续逻辑
@@ -1509,7 +1849,27 @@
 						// 清理状态，取消定时器
 						pendingCallbacks = null;
 						isFlushing = false;
-						safeClearTimeout(timeoutId);
+						// 安全执行 clearTimeout（兼容不同调用方式）
+						// 若已指向原生 clearTimeout，直接调用
+						if (clearTimeoutFunc === clearTimeout) {
+							return clearTimeout(timeoutId);
+						}
+						// 若 clearTimeoutFunc 未初始化或为异常函数，且原生 clearTimeout 存在，先初始化
+						if ((clearTimeoutFunc === throwClearTimeoutUndefinedError || !clearTimeoutFunc) &&
+							clearTimeout) {
+							clearTimeoutFunc = clearTimeout;
+							return clearTimeout(timeoutId);
+						}
+						// 尝试多种调用方式兼容不同环境
+						try {
+							return clearTimeoutFunc(timeoutId);
+						} catch (error) {
+							try {
+								return clearTimeoutFunc.call(null, timeoutId);
+							} catch (error) {
+								return clearTimeoutFunc.call(this, timeoutId);
+							}
+						}
 					}
 				}
 				// 回调包装类：存储回调函数和参数数组
@@ -1530,7 +1890,7 @@
 				let clearTimeoutFunc;
 				const exportsObj = e.exports = {};
 				// 初始化 timeoutFunc 和 clearTimeoutFunc（兼容环境判断）
-				(function initTimeoutFunctions() {
+				(function() {
 					try {
 						// 优先使用原生 setTimeout，否则使用异常抛出函数
 						timeoutFunc = typeof setTimeout === "function" ? setTimeout :
@@ -1553,10 +1913,11 @@
 				let currentIndex = -1; // 回调执行索引
 				// 实现 nextTick 方法（核心功能：异步执行回调）
 				exportsObj.nextTick = function(callback) {
+					const len = arguments.length;
 					// 收集除第一个参数外的其他参数作为回调参数
-					const args = new Array(arguments.length - 1);
-					if (arguments.length > 1) {
-						for (let i = 1; i < arguments.length; i++) {
+					const args = new Array(len - 1);
+					if (len > 1) {
+						for (let i = 1; i < len; i++) {
 							args[i - 1] = arguments[i];
 						}
 					}
@@ -1603,13 +1964,10 @@
 			/**
 			 * 播放器配置合并与标准化工具
 			 * 功能：为播放器补充默认配置，并对传入配置进行格式规范化处理
-			 * @param {Object} externalModule - 模块加载相关依赖（原代码 e，无实际业务作用，保留以兼容原功能）
-			 * @param {Object} moduleExports - 模块导出对象（原代码 t，用于挂载导出内容）
-			 * @param {Function} requireModule - 模块引入函数（原代码 n，用于加载依赖模块）
 			 */
-			function initPlayerConfigModule(externalModule, moduleExports, requireModule) {
+			function(e, t, n) {
 				// 标记为 ES 模块（兼容 ES Module 与 CommonJS 互操作）
-				Object.defineProperty(moduleExports, '__esModule', {
+				Object.defineProperty(t, '__esModule', {
 					value: true
 				});
 				/**
@@ -1629,8 +1987,6 @@
 						'symbol' :
 						typeof value;
 				}
-				// 引入 13 号模块并处理模块导出格式（兼容 ES Module 默认导出）
-				const apiBackendModule = requireModule(13);
 				/**
 				 * 统一模块导出格式
 				 * 若为 ES 模块则直接返回，否则包装为 { default: 模块内容 } 格式
@@ -1642,13 +1998,13 @@
 						default: module
 					};
 				}
-				const normalizedApiBackend = normalizeModuleExport(apiBackendModule);
+				const normalizedApiBackend = normalizeModuleExport(n(13));
 				/**
 				 * 播放器配置合并核心方法
 				 * @param {Object} userConfig - 用户传入的自定义配置
 				 * @returns {Object} 合并默认配置并标准化后的最终配置
 				 */
-				moduleExports.default = function mergePlayerConfig(userConfig) {
+				t.default = function mergePlayerConfig(userConfig) {
 					// 播放器默认配置项
 					const defaultConfig = {
 						container: userConfig.element || document.getElementsByClassName('hjplayer')[0],
@@ -1660,7 +2016,7 @@
 						screenshot: false,
 						hotkey: true,
 						preload: 'auto',
-						volume: 0.7,
+						volume: 1,
 						apiBackend: normalizedApiBackend.default,
 						video: {},
 						contextmenu: [],
@@ -2852,537 +3208,756 @@
 					e.exports = toolObject;
 				}).call(t, n(1));
 			},
-			// -----------------------------------------------------------------------------------------------------------------
 			function(e, t, n) {
-				(function(t) {
-					e.exports = !1;
+				// 内部辅助函数：检测是否为 Node.js 环境的 process 对象
+				(function(processObj) {
+					// 初始化模块导出结果为 false
+					e.exports = false;
 					try {
-						e.exports = "[object process]" === Object.prototype.toString.call(t.process)
+						// 精准判断传入对象是否是 Node.js 的 process 实例
+						e.exports = Object.prototype.toString.call(processObj) === "[object process]";
 					} catch (e) {}
 				}).call(t, n(1))
 			},
+			// 弹幕相关
 			function(e, t, n) {
-				function i(e, t) {
-					if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function")
+				// 1. 类实例校验工具函数
+				function validateClassInstance(obj, ClassConstructor) {
+					if (!(obj instanceof ClassConstructor)) {
+						throw new TypeError("Cannot call a class as a function");
+					}
 				}
-				Object.defineProperty(t, "__esModule", {
-					value: !0
-				});
-				var a = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e) {
-						return typeof e
-					} : function(e) {
-						return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol
-							.prototype ? "symbol" :
-							typeof e
-					},
-					o = function() {
-						function e(e, t) {
-							for (var n = 0; n < t.length; n++) {
-								var i = t[n];
-								i.enumerable = i.enumerable || !1, i.configurable = !0, "value" in i && (i
-									.writable = !0), Object.defineProperty(
-									e, i.key, i)
-							}
-						}
-						return function(t, n, i) {
-							return n && e(t.prototype, n), i && e(t, i), t
-						}
-					}(),
-					s = function() {
-						function e(t) {
-							i(this, e), this.options = t, this.container = this.options.container, this
-								.danTunnel = {
-									right: {},
-									top: {},
-									bottom: {}
-								}, this.danIndex = 0, this.dan = [], this.showing = !0, this._opacity = this
-								.options.opacity, this.events =
-								this.options.events, this.unlimited = this.options.unlimited, this._measure(""),
-								this.load()
-						}
-						return o(e, [{
-							key: "load",
-							value: function() {
-								var e = this,
-									t = void 0;
-								t = this.options.api.maximum ? this.options.api.address +
-									"&id=" + this.options.api.id + "&max=" + this.options
-									.api.maximum : this.options.api.address + "&id=" + this
-									.options.api.id;
-								var n = (this.options.api.addition || []).slice(0);
-								n.push(t), this.events && this.events.trigger(
-									"danmaku_load_start", n), this._readAllEndpoints(n,
-									function(t) {
-										e.dan = [].concat.apply([], t).sort(function(e, t) {
-												return e.time - t.time
-											}), window.requestAnimationFrame(function() {
-												e.frame()
-											}), e.options.callback(), e.events && e.events
-											.trigger("danmaku_load_end")
-									})
-							}
-						}, {
-							key: "reload",
-							value: function(e) {
-								this.options.api = e, this.dan = [], this.clear(), this.load()
-							}
-						}, {
-							key: "_readAllEndpoints",
-							value: function(e, t) {
-								for (var n = this, i = [], a = 0, o = 0; o < e.length; ++o) this
-									.options.apiBackend.read(e[o], function(o) {
-										return function(s, r) {
-											if (++a, s) s.response ? n.options.error(s
-												.response.msg) : n.options.error(
-												"弹幕加载失败：" + s.status), i[
-												o] = [];
-											else {
-												var l = ["right", "top", "bottom"];
-												i[o] = r ? r.map(function(e) {
-													return {
-														time: e[0],
-														type: e[1],
-														color: e[2],
-														author: e[3],
-														text: e[4],
-														size: e[7]
-													}
-												}) : []
-											}
-											if (a === e.length) return t(i)
-										}
-									}(o))
-							}
-						}, {
-							key: "send",
-							value: function(e, t) {
-								var n = {
-									token: this.options.api.token,
-									player: this.options.api.id,
-									author: this.options.api.user,
-									time: this.options.time(),
-									text: e.text,
-									color: e.color,
-									type: e.type,
-									size: e.size
-								};
-								this.options.apiBackend.send(this.options.api.address, n, t),
-									this.dan.splice(this.danIndex, 0, n), this.danIndex++;
-								var i = {
-									text: this.htmlEncode(n.text),
-									color: n.color,
-									type: n.type,
-									size: n.size,
-									border: "2px solid " + this.options.borderColor
-								};
-								this.draw(i), this.events && this.events.trigger("danmaku_send",
-									n)
-							}
-						}, {
-							key: "frame",
-							value: function() {
-								var e = this;
-								if (this.dan.length && !this.paused && this.showing) {
-									for (var t = this.dan[this.danIndex], n = []; t && this
-										.options.time() > parseFloat(t.time);) n.push(t),
-										t = this.dan[++this.danIndex];
-									this.draw(n)
-								}
-								window.requestAnimationFrame(function() {
-									e.frame()
-								})
-							}
-						}, {
-							key: "opacity",
-							value: function(e) {
-								if (void 0 !== e) {
-									for (var t = this.container.getElementsByClassName(
-											"hjplayer-danmaku-item"), n = 0; n < t.length; n++)
-										t[
-											n].style.opacity = e;
-									this._opacity = e, this.events && this.events.trigger(
-										"danmaku_opacity", this._opacity)
-								}
-								return this._opacity
-							}
-						}, {
-							key: "draw",
-							value: function(e) {
-								var t = this;
-								if (this.showing) {
-									var n = this.options.height,
-										i = this.container.offsetWidth,
-										o = this.container.offsetHeight,
-										s = parseInt(o / n),
-										r = function(e) {
-											var n = e.offsetWidth || parseInt(e.style.width),
-												i = e.getBoundingClientRect().right || t
-												.container.getBoundingClientRect().right + n;
-											return t.container.getBoundingClientRect().right - i
-										},
-										l = function(e) {
-											return (i + e) / 5
-										},
-										c = function(e, n, o) {
-											for (var c = i / l(o), u = 0; t.unlimited || u <
-												s; u++) {
-												var d = function(a) {
-													var o = t.danTunnel[n][a + ""];
-													if (!o || !o.length) return t.danTunnel[
-															n][a + ""] = [e], e
-														.addEventListener(
-															"animationend",
-															function() {
-																t.danTunnel[n][a + ""]
-																	.splice(0, 1)
-															}), {
-															v: a % s
-														};
-													if ("right" !== n) return "continue";
-													for (var u = 0; u < o.length; u++) {
-														var d = r(o[u]) - 10;
-														if (d <= i - c * l(parseInt(o[u]
-																.style.width)) || d <= 0)
-															break;
-														if (u === o.length - 1) return t
-															.danTunnel[n][a + ""].push(
-																e), e.addEventListener(
-																"animationend",
-																function() {
-																	t.danTunnel[n][a +
-																		""
-																	].splice(0, 1)
-																}), {
-																v: a % s
-															}
-													}
-												}(u);
-												switch (d) {
-													case "continue":
-														continue;
-													default:
-														if ("object" === (void 0 === d ?
-																"undefined" : a(d))) return d.v
-												}
-											}
-											return -1
-										};
-									"[object Array]" !== Object.prototype.toString.call(e) && (
-										e = [e]);
-									for (var u = document.createDocumentFragment(), d = 0; d < e
-										.length; d++) ! function(a) {
-										e[a].type || (e[a].type = "right"), e[a].color || (
-											e[a].color = "#fff");
-										e[a].size || (e[a].fontSize = "27.5px");
-										var o = document.createElement("div");
-										o.classList.add("hjplayer-danmaku-item"), o
-											.classList.add("hjplayer-danmaku-" + e[a]
-												.type), e[a].border ?
-											o.innerHTML = '<span style="border-bottom:' + e[
-												a].border + '">' + e[a].text + "</span>" : o
-											.innerHTML =
-											e[a].text, o.style.opacity = t._opacity, o.style
-											.color = e[a].color, o.style.fontSize = e[a]
-											.size, o.addEventListener(
-												"animationend",
-												function() {
-													t.container.removeChild(o)
-												});
-										var s = t._measure(e[a].text),
-											r = void 0;
-										switch (e[a].type) {
-											case "right":
-												r = c(o, e[a].type, s), r >= 0 && (o.style
-													.width = s + 1 + "px", o.style.top =
-													n * r + "px", o.style
-													.transform = "translateX(-" + i +
-													"px)");
-												break;
-											case "top":
-												r = c(o, e[a].type), r >= 0 && (o.style
-													.top = n * r + "px");
-												break;
-											case "bottom":
-												r = c(o, e[a].type), r >= 0 && (o.style
-													.bottom = n * r + "px");
-												break;
-											default:
-												console.error(
-													"Can't handled danmaku type: " + e[
-														a].type)
-										}
-										r >= 0 && (o.classList.add(
-												"hjplayer-danmaku-move"), u
-											.appendChild(o))
-									}(d);
-									return this.container.appendChild(u), u
-								}
-							}
-						}, {
-							key: "play",
-							value: function() {
-								this.paused = !1
-							}
-						}, {
-							key: "pause",
-							value: function() {
-								this.paused = !0
-							}
-						}, {
-							key: "_measure",
-							value: function(e) {
-								if (!this.context) {
-									var t = getComputedStyle(this.container
-										.getElementsByClassName("hjplayer-danmaku-item")[
-											0], null);
-									this.context = document.createElement("canvas").getContext(
-										"2d"), this.context.font = t.getPropertyValue(
-										"font")
-								}
-								return this.context.measureText(e).width
-							}
-						}, {
-							key: "seek",
-							value: function() {
-								this.clear();
-								for (var e = 0; e < this.dan.length; e++) {
-									if (this.dan[e].time >= this.options.time()) {
-										this.danIndex = e;
-										break
-									}
-									this.danIndex = this.dan.length
-								}
-							}
-						}, {
-							key: "clear",
-							value: function() {
-								this.danTunnel = {
-										right: {},
-										top: {},
-										bottom: {}
-									}, this.danIndex = 0, this.options.container.innerHTML = "",
-									this.events && this.events.trigger(
-										"danmaku_clear")
-							}
-						}, {
-							key: "htmlEncode",
-							value: function(e) {
-								return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(
-									/>/g, "&gt;").replace(/"/g, "&quot;").replace(
-									/'/g, "&#x27;").replace(/\//g, "&#x2f;")
-							}
-						}, {
-							key: "resize",
-							value: function() {
-								for (var e = this.container.offsetWidth, t = this.container
-										.getElementsByClassName(
-											"hjplayer-danmaku-item"), n = 0; n < t.length; n++)
-									t[n].style.transform = "translateX(-" + e + "px)"
-							}
-						}, {
-							key: "hide",
-							value: function() {
-								this.showing = !1, this.pause(), this.clear(), this.events &&
-									this.events.trigger("danmaku_hide")
-							}
-						}, {
-							key: "show",
-							value: function() {
-								this.seek(), this.showing = !0, this.play(), this.events && this
-									.events.trigger("danmaku_show")
-							}
-						}, {
-							key: "unlimit",
-							value: function(e) {
-								this.unlimited = e
-							}
-						}]), e
-					}();
-				t.default = s
-			},
-			function(e, t, n) {
-				function i(e, t) {
-					if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function")
+				// 2. 类型判断工具函数
+				function getValueType(obj) {
+					if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+						return typeof obj;
+					}
+					return obj &&
+						typeof Symbol === 'function' &&
+						obj.constructor === Symbol &&
+						obj !== Symbol.prototype ?
+						'symbol' :
+						typeof obj;
 				}
-				Object.defineProperty(t, "__esModule", {
-					value: !0
-				});
-				var a = function() {
-						function e(e, t) {
-							for (var n = 0; n < t.length; n++) {
-								var i = t[n];
-								i.enumerable = i.enumerable || !1, i.configurable = !0, "value" in i && (i
-									.writable = !0), Object.defineProperty(
-									e, i.key, i)
+				// 3. 类装饰器函数
+				function classDecorator(target, protoMethods, staticMethods) {
+					if (protoMethods && protoMethods.length) {
+						protoMethods.forEach(prop => {
+							prop.enumerable = prop.enumerable || false;
+							prop.configurable = true;
+							if ('value' in prop) {
+								prop.writable = true;
 							}
-						}
-						return function(t, n, i) {
-							return n && e(t.prototype, n), i && e(t, i), t
-						}
-					}(),
-					o = function() {
-						function e() {
-							i(this, e), this.events = {}, this.videoEvents = ["abort", "canplay",
-								"canplaythrough", "durationchange",
-								"emptied", "ended", "error", "loadeddata", "loadedmetadata", "loadstart",
-								"mozaudioavailable", "pause",
-								"play", "playing", "progress", "ratechange", "seeked", "seeking", "stalled",
-								"suspend", "timeupdate",
-								"volumechange", "waiting"
-							], this.playerEvents = ["screenshot", "thumbnails_show", "thumbnails_hide",
-								"danmaku_show", "danmaku_hide",
-								"danmaku_clear", "danmaku_loaded", "danmaku_send", "danmaku_opacity",
-								"contextmenu_show", "contextmenu_hide",
-								"notice_show", "notice_hide", "quality_start", "quality_end", "destroy",
-								"resize", "fullscreen",
-								"fullscreen_cancel", "webfullscreen", "webfullscreen_cancel",
-								"subtitle_show", "subtitle_hide",
-								"subtitle_change"
-							]
-						}
-						return a(e, [{
-							key: "on",
-							value: function(e, t) {
-								this.type(e) && "function" == typeof t && (this.events[e] || (
-									this.events[e] = []), this.events[e].push(t))
+							Object.defineProperty(target.prototype, prop.key, prop);
+						});
+					}
+					if (staticMethods && staticMethods.length) {
+						staticMethods.forEach(prop => {
+							prop.enumerable = prop.enumerable || false;
+							prop.configurable = true;
+							if ('value' in prop) {
+								prop.writable = true;
 							}
-						}, {
-							key: "trigger",
-							value: function(e, t) {
-								if (this.events[e] && this.events[e].length)
-									for (var n = 0; n < this.events[e].length; n++) this.events[
-										e][n](t)
-							}
-						}, {
-							key: "type",
-							value: function(e) {
-								return -1 !== this.playerEvents.indexOf(e) ? "player" : -1 !==
-									this.videoEvents.indexOf(e) ? "video" : (
-										console.error("Unknown event name: " + e), null)
-							}
-						}]), e
-					}();
-				t.default = o
-			},
-			function(e, t, n) {
-				function i(e, t) {
-					if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function")
+							Object.defineProperty(target, prop.key, prop);
+						});
+					}
+					return target;
 				}
-				Object.defineProperty(t, "__esModule", {
-					value: !0
-				});
-				var a = function() {
-						function e(e, t) {
-							for (var n = 0; n < t.length; n++) {
-								var i = t[n];
-								i.enumerable = i.enumerable || !1, i.configurable = !0, "value" in i && (i
-									.writable = !0), Object.defineProperty(
-									e, i.key, i)
-							}
+				// 4. 弹幕核心类
+				class Danmaku {
+					constructor(options) {
+						validateClassInstance(this, Danmaku);
+						this.options = options;
+						this.container = this.options.container;
+						this.danTunnel = {
+							right: {},
+							top: {},
+							bottom: {}
+						};
+						this.danIndex = 0;
+						this.dan = [];
+						this.showing = true;
+						this._opacity = this.options.opacity;
+						this.events = this.options.events;
+						this.unlimited = this.options.unlimited;
+						this.paused = false;
+						this._measure("");
+						this.load();
+					}
+					// 加载弹幕
+					load() {
+						let apiUrl;
+						if (this.options.api.maximum) {
+							apiUrl =
+								`${this.options.api.address}&id=${this.options.api.id}&max=${this.options.api.maximum}`;
+						} else {
+							apiUrl = `${this.options.api.address}&id=${this.options.api.id}`;
 						}
-						return function(t, n, i) {
-							return n && e(t.prototype, n), i && e(t, i), t
+						const endpoints = (this.options.api.addition || []).slice(0);
+						endpoints.push(apiUrl);
+						if (this.events) {
+							this.events.trigger("danmaku_load_start", endpoints);
 						}
-					}(),
-					o = n(0),
-					s = function(e) {
-						return e && e.__esModule ? e : {
-							default: e
-						}
-					}(o),
-					r = function() {
-						function e(t) {
-							var n = this;
-							i(this, e), this.player = t, this.player.events.on("webfullscreen", function() {
-								n.player.resize()
-							}), this.player.events.on("webfullscreen_cancel", function() {
-								n.player.resize(), s.default.setScrollPosition(n.lastScrollPosition)
+						this._readAllEndpoints(endpoints, (dataList) => {
+							this.dan = [].concat.apply([], dataList).sort((a, b) => a.time - b
+								.time);
+							window.requestAnimationFrame(() => {
+								this.frame();
 							});
-							var a = function() {
-								n.player.resize(), n.isFullScreen("browser") ? n.player.events.trigger(
-									"fullscreen") : (s.default.setScrollPosition(
-									n.lastScrollPosition), n.player.events.trigger(
-									"fullscreen_cancel"))
-							};
-							this.player.container.addEventListener("fullscreenchange", a), this.player.container
-								.addEventListener(
-									"mozfullscreenchange", a), this.player.container.addEventListener(
-									"webkitfullscreenchange", a)
+							this.options.callback();
+							if (this.events) {
+								this.events.trigger("danmaku_load_end");
+							}
+						});
+					}
+					// 重新加载弹幕
+					reload(apiConfig) {
+						this.options.api = apiConfig;
+						this.dan = [];
+						this.clear();
+						this.load();
+					}
+					// 读取所有端点弹幕
+					_readAllEndpoints(endpoints, callback) {
+						const resultList = [];
+						let completedCount = 0;
+						const totalCount = endpoints.length;
+						endpoints.forEach((endpoint, index) => {
+							this.options.apiBackend.read(endpoint, (error, response) => {
+								completedCount++;
+								if (error) {
+									const errorMsg = error.response ? error.response.msg :
+										`弹幕加载失败：${error.status}`;
+									this.options.error(errorMsg);
+									resultList[index] = [];
+								} else {
+									resultList[index] = response ? response.map(item => ({
+										time: item[0],
+										type: item[1],
+										color: item[2],
+										author: item[3],
+										text: item[4],
+										size: item[7]
+									})) : [];
+								}
+								if (completedCount === totalCount) {
+									callback(resultList);
+								}
+							});
+						});
+					}
+					// 发送弹幕
+					send(danmakuData, callback) {
+						const sendData = {
+							token: this.options.api.token,
+							player: this.options.api.id,
+							author: this.options.api.user,
+							time: this.options.time(),
+							text: danmakuData.text,
+							color: danmakuData.color,
+							type: danmakuData.type,
+							size: danmakuData.size
+						};
+						this.options.apiBackend.send(this.options.api.address, sendData, callback);
+						this.dan.splice(this.danIndex, 0, sendData);
+						this.danIndex++;
+						const drawData = {
+							text: this.htmlEncode(sendData.text),
+							color: sendData.color,
+							type: sendData.type,
+							size: sendData.size,
+							border: `2px solid ${this.options.borderColor}`
+						};
+						this.draw(drawData);
+						if (this.events) {
+							this.events.trigger("danmaku_send", sendData);
 						}
-						return a(e, [{
-							key: "isFullScreen",
-							value: function() {
-								switch (arguments.length > 0 && void 0 !== arguments[0] ?
-									arguments[0] : "browser") {
-									case "browser":
-										return document.fullscreenElement || document
-											.mozFullScreenElement || document
-											.webkitFullscreenElement;
-									case "web":
-										return this.player.container.classList.contains(
-											"hjplayer-fulled")
+					}
+					// 帧循环
+					frame() {
+						const that = this;
+						if (this.dan.length && !this.paused && this.showing) {
+							const currentTime = this.options.time();
+							const readyDanmakus = [];
+							let currentDanmaku = this.dan[this.danIndex];
+							while (currentDanmaku && currentTime > parseFloat(currentDanmaku.time)) {
+								readyDanmakus.push(currentDanmaku);
+								currentDanmaku = this.dan[++this.danIndex];
+							}
+							this.draw(readyDanmakus);
+						}
+						window.requestAnimationFrame(() => {
+							that.frame();
+						});
+					}
+					// 透明度设置/获取
+					opacity(value) {
+						if (typeof value !== 'undefined') {
+							const danmakuItems = this.container.getElementsByClassName(
+								"hjplayer-danmaku-item");
+							for (let i = 0; i < danmakuItems.length; i++) {
+								danmakuItems[i].style.opacity = value;
+							}
+							this._opacity = value;
+							if (this.events) {
+								this.events.trigger("danmaku_opacity", this._opacity);
+							}
+						}
+						return this._opacity;
+					}
+					// 绘制弹幕
+					draw(danmakus) {
+						if (!this.showing) return;
+						const options = this.options;
+						const container = this.container;
+						const containerWidth = container.offsetWidth;
+						const containerHeight = container.offsetHeight;
+						const lineHeight = options.height;
+						const lineCount = parseInt(containerHeight / lineHeight);
+						const getElementRightOffset = (element) => {
+							const elementWidth = element.offsetWidth || parseInt(element.style.width);
+							const elementRight = element.getBoundingClientRect().right || (container
+								.getBoundingClientRect().right + elementWidth);
+							return container.getBoundingClientRect().right - elementRight;
+						};
+						const getAnimationDurationFactor = (width) => {
+							return (containerWidth + width) / 5;
+						};
+						const assignDanmakuTrack = (element, type, width) => {
+							for (let lineIndex = 0; this.unlimited || lineIndex <
+								lineCount; lineIndex++) {
+								const trackHandler = (trackIndex) => {
+									const track = this.danTunnel[type][trackIndex + ""];
+									if (!track || !track.length) {
+										this.danTunnel[type][trackIndex + ""] = [element];
+										element.addEventListener("animationend", () => {
+											this.danTunnel[type][trackIndex + ""].splice(0,
+												1);
+										});
+										return {
+											v: trackIndex % lineCount
+										};
+									}
+									if (type !== "right") {
+										return "continue";
+									}
+									for (let i = 0; i < track.length; i++) {
+										const existingElement = track[i];
+										const offset = getElementRightOffset(existingElement) - 10;
+										const requiredOffset = containerWidth - ((containerWidth /
+												getAnimationDurationFactor(parseInt(
+													existingElement.style.width))) *
+											getAnimationDurationFactor(width));
+										if (offset <= requiredOffset || offset <= 0) {
+											break;
+										}
+										if (i === track.length - 1) {
+											this.danTunnel[type][trackIndex + ""].push(element);
+											element.addEventListener("animationend", () => {
+												this.danTunnel[type][trackIndex + ""]
+													.splice(0, 1);
+											});
+											return {
+												v: trackIndex % lineCount
+											};
+										}
+									}
+									return "continue";
+								};
+								const trackResult = trackHandler(lineIndex);
+								switch (trackResult) {
+									case "continue":
+										continue;
+									default:
+										if (typeof trackResult === 'object' && trackResult !== null) {
+											return trackResult.v;
+										}
 								}
 							}
-						}, {
-							key: "request",
-							value: function() {
-								var e = arguments.length > 0 && void 0 !== arguments[0] ?
-									arguments[0] : "browser",
-									t = "browser" === e ? "web" : "browser",
-									n = this.isFullScreen(t);
-								switch (n || (this.lastScrollPosition = s.default
-										.getScrollPosition()), e) {
-									case "browser":
-										this.player.container.requestFullscreen ? this.player
-											.container.requestFullscreen() : this.player
-											.container
-											.mozRequestFullScreen ? this.player.container
-											.mozRequestFullScreen() : this.player.container
-											.webkitRequestFullscreen ?
-											this.player.container.webkitRequestFullscreen() :
-											this.player.video.webkitEnterFullscreen && this
-											.player
-											.video.webkitEnterFullscreen();
-										break;
-									case "web":
-										this.player.container.classList.add("hjplayer-fulled"),
-											document.body.classList.add(
-												"hjplayer-web-fullscreen-fix"), this.player
-											.events.trigger("webfullscreen")
-								}
-								n && this.cancel(t)
+							return -1;
+						};
+						const danmakuList = Object.prototype.toString.call(danmakus) === "[object Array]" ?
+							danmakus : [danmakus];
+						const documentFragment = document.createDocumentFragment();
+						danmakuList.forEach((danmaku) => {
+							danmaku.type = danmaku.type || "right";
+							danmaku.color = danmaku.color || "#fff";
+							danmaku.size = danmaku.size || "27.5px";
+							const danmakuElement = document.createElement("div");
+							danmakuElement.classList.add("hjplayer-danmaku-item");
+							danmakuElement.classList.add(`hjplayer-danmaku-${danmaku.type}`);
+							if (danmaku.border) {
+								danmakuElement.innerHTML =
+									`<span style="border-bottom:${danmaku.border}">${danmaku.text}</span>`;
+							} else {
+								danmakuElement.innerHTML = danmaku.text;
 							}
-						}, {
-							key: "cancel",
-							value: function() {
-								switch (arguments.length > 0 && void 0 !== arguments[0] ?
-									arguments[0] : "browser") {
-									case "browser":
-										document.cancelFullScreen ? document
-											.cancelFullScreen() : document.mozCancelFullScreen ?
-											document.mozCancelFullScreen() :
-											document.webkitCancelFullScreen && document
-											.webkitCancelFullScreen();
-										break;
-									case "web":
-										this.player.container.classList.remove(
-												"hjplayer-fulled"), document.body.classList
-											.remove(
-												"hjplayer-web-fullscreen-fix"), this.player
-											.events.trigger("webfullscreen_cancel")
-								}
+							danmakuElement.style.opacity = this._opacity;
+							danmakuElement.style.color = danmaku.color;
+							danmakuElement.style.fontSize = danmaku.size;
+							danmakuElement.addEventListener("animationend", () => {
+								container.removeChild(danmakuElement);
+							});
+							const textWidth = this._measure(danmaku.text);
+							let trackIndex;
+							switch (danmaku.type) {
+								case "right":
+									trackIndex = assignDanmakuTrack(danmakuElement, danmaku.type,
+										textWidth);
+									if (trackIndex >= 0) {
+										danmakuElement.style.width = `${textWidth + 1}px`;
+										danmakuElement.style.top = `${lineHeight * trackIndex}px`;
+										danmakuElement.style.transform =
+											`translateX(-${containerWidth}px)`;
+									}
+									break;
+								case "top":
+									trackIndex = assignDanmakuTrack(danmakuElement, danmaku.type);
+									if (trackIndex >= 0) {
+										danmakuElement.style.top = `${lineHeight * trackIndex}px`;
+									}
+									break;
+								case "bottom":
+									trackIndex = assignDanmakuTrack(danmakuElement, danmaku.type);
+									if (trackIndex >= 0) {
+										danmakuElement.style.bottom =
+											`${lineHeight * trackIndex}px`;
+									}
+									break;
+								default:
+									console.error(`Can't handled danmaku type: ${danmaku.type}`);
 							}
-						}, {
-							key: "toggle",
-							value: function() {
-								var e = arguments.length > 0 && void 0 !== arguments[0] ?
-									arguments[0] : "browser";
-								this.isFullScreen(e) ? this.cancel(e) : this.request(e)
+							if (trackIndex >= 0) {
+								danmakuElement.classList.add("hjplayer-danmaku-move");
+								documentFragment.appendChild(danmakuElement);
 							}
-						}]), e
-					}();
-				t.default = r
+						});
+						container.appendChild(documentFragment);
+						return documentFragment;
+					}
+					// 播放弹幕
+					play() {
+						this.paused = false;
+					}
+					// 暂停弹幕
+					pause() {
+						this.paused = true;
+					}
+					// 测量文本宽度
+					_measure(text) {
+						if (!this.context) {
+							const firstDanmakuItem = this.container.getElementsByClassName(
+								"hjplayer-danmaku-item")[0];
+							const computedStyle = getComputedStyle(firstDanmakuItem, null);
+							this.context = document.createElement("canvas").getContext("2d");
+							this.context.font = computedStyle.getPropertyValue("font");
+						}
+						return this.context.measureText(text).width;
+					}
+					// 弹幕定位
+					seek() {
+						this.clear();
+						const currentTime = this.options.time();
+						for (let i = 0; i < this.dan.length; i++) {
+							if (this.dan[i].time >= currentTime) {
+								this.danIndex = i;
+								break;
+							}
+							this.danIndex = this.dan.length;
+						}
+					}
+					// 清空弹幕
+					clear() {
+						this.danTunnel = {
+							right: {},
+							top: {},
+							bottom: {}
+						};
+						this.danIndex = 0;
+						this.options.container.innerHTML = "";
+						if (this.events) {
+							this.events.trigger("danmaku_clear");
+						}
+					}
+					// HTML 编码
+					htmlEncode(text) {
+						return text
+							.replace(/&/g, "&amp;")
+							.replace(/</g, "&lt;")
+							.replace(/>/g, "&gt;")
+							.replace(/"/g, "&quot;")
+							.replace(/'/g, "&#x27;")
+							.replace(/\//g, "&#x2f;");
+					}
+					// 窗口 resize 处理
+					resize() {
+						const containerWidth = this.container.offsetWidth;
+						const danmakuItems = this.container.getElementsByClassName("hjplayer-danmaku-item");
+						for (let i = 0; i < danmakuItems.length; i++) {
+							danmakuItems[i].style.transform = `translateX(-${containerWidth}px)`;
+						}
+					}
+					// 隐藏弹幕
+					hide() {
+						this.showing = false;
+						this.pause();
+						this.clear();
+						if (this.events) {
+							this.events.trigger("danmaku_hide");
+						}
+					}
+					// 显示弹幕
+					show() {
+						this.seek();
+						this.showing = true;
+						this.play();
+						if (this.events) {
+							this.events.trigger("danmaku_show");
+						}
+					}
+					// 设置无限轨道
+					unlimit(isUnlimited) {
+						this.unlimited = isUnlimited;
+					}
+				}
+				// 5. 应用类装饰器
+				const DecoratedDanmaku = classDecorator(Danmaku, [{
+						key: "load",
+						value: Danmaku.prototype.load
+					},
+					{
+						key: "reload",
+						value: Danmaku.prototype.reload
+					},
+					{
+						key: "_readAllEndpoints",
+						value: Danmaku.prototype._readAllEndpoints
+					},
+					{
+						key: "send",
+						value: Danmaku.prototype.send
+					},
+					{
+						key: "frame",
+						value: Danmaku.prototype.frame
+					},
+					{
+						key: "opacity",
+						value: Danmaku.prototype.opacity
+					},
+					{
+						key: "draw",
+						value: Danmaku.prototype.draw
+					},
+					{
+						key: "play",
+						value: Danmaku.prototype.play
+					},
+					{
+						key: "pause",
+						value: Danmaku.prototype.pause
+					},
+					{
+						key: "_measure",
+						value: Danmaku.prototype._measure
+					},
+					{
+						key: "seek",
+						value: Danmaku.prototype.seek
+					},
+					{
+						key: "clear",
+						value: Danmaku.prototype.clear
+					},
+					{
+						key: "htmlEncode",
+						value: Danmaku.prototype.htmlEncode
+					},
+					{
+						key: "resize",
+						value: Danmaku.prototype.resize
+					},
+					{
+						key: "hide",
+						value: Danmaku.prototype.hide
+					},
+					{
+						key: "show",
+						value: Danmaku.prototype.show
+					},
+					{
+						key: "unlimit",
+						value: Danmaku.prototype.unlimit
+					}
+				], []);
+				// 6. 模块导出配置（保持原代码逻辑）
+				Object.defineProperty(t, "__esModule", {
+					value: true
+				});
+				t.default = DecoratedDanmaku;
 			},
+			function(e, t, n) {
+				// 1. 类型检查工具函数（内部嵌套，不暴露外部）
+				function checkClassInvocation(instance, Constructor) {
+					if (!(instance instanceof Constructor)) {
+						throw new TypeError("Cannot call a class as a function");
+					}
+				}
+				// 2. 类属性定义辅助函数（内部嵌套）
+				function defineClassProperties(target, props) {
+					for (let i = 0; i < props.length; i++) {
+						const prop = props[i];
+						prop.enumerable = prop.enumerable || false;
+						prop.configurable = true;
+						if ("value" in prop) {
+							prop.writable = true;
+						}
+						Object.defineProperty(target, prop.key, prop);
+					}
+				}
+				// 3. 类构建辅助函数（内部嵌套）
+				function createClass(Constructor, protoProps, staticProps) {
+					if (protoProps) {
+						defineClassProperties(Constructor.prototype, protoProps);
+					}
+					if (staticProps) {
+						defineClassProperties(Constructor, staticProps);
+					}
+					return Constructor;
+				}
+				// 4. 标记__esModule（与原代码功能一致）
+				Object.defineProperty(t, "__esModule", {
+					value: true
+				});
+				// 5. 事件管理器构造函数（对应原o类）
+				const EventManager = (function() {
+					function e() {
+						checkClassInvocation(this, e);
+						this.events = {};
+						this.videoEvents = [
+							"abort", "canplay", "canplaythrough", "durationchange",
+							"emptied", "ended", "error", "loadeddata", "loadedmetadata",
+							"loadstart", "mozaudioavailable", "pause", "play", "playing",
+							"progress", "ratechange", "seeked", "seeking", "stalled",
+							"suspend", "timeupdate", "volumechange", "waiting"
+						];
+						this.playerEvents = [
+							"screenshot", "thumbnails_show", "thumbnails_hide", "danmaku_show",
+							"danmaku_hide", "danmaku_clear", "danmaku_loaded", "danmaku_send",
+							"danmaku_opacity", "contextmenu_show", "contextmenu_hide",
+							"notice_show",
+							"notice_hide", "quality_start", "quality_end", "destroy", "resize",
+							"fullscreen", "fullscreen_cancel", "webfullscreen",
+							"webfullscreen_cancel",
+							"subtitle_show", "subtitle_hide", "subtitle_change"
+						];
+					}
+					// 挂载原型方法（on/trigger/type）
+					return createClass(e, [{
+						key: "on",
+						value: function(eventName, callback) {
+							if (this.type(eventName) && typeof callback ===
+								"function") {
+								if (!this.events[eventName]) {
+									this.events[eventName] = [];
+								}
+								this.events[eventName].push(callback);
+							}
+						}
+					}, {
+						key: "trigger",
+						value: function(eventName, data) {
+							if (this.events[eventName] && this.events[eventName]
+								.length) {
+								for (let i = 0; i < this.events[eventName]
+									.length; i++) {
+									this.events[eventName][i](data);
+								}
+							}
+						}
+					}, {
+						key: "type",
+						value: function(eventName) {
+							if (this.playerEvents.indexOf(eventName) !== -1) {
+								return "player";
+							}
+							if (this.videoEvents.indexOf(eventName) !== -1) {
+								return "video";
+							}
+							console.error("Unknown event name: " + eventName);
+							return null;
+						}
+					}]), e;
+				})();
+				// 6. 默认导出（与原代码功能一致）
+				t.default = EventManager;
+			},
+			// 播放器全屏管理方法
+			function(e, t, n) {
+				// 1. 类型检查工具函数：确保类被正确实例化
+				const checkClassInstance = (target, ClassConstructor) => {
+					if (!(target instanceof ClassConstructor)) {
+						throw new TypeError("Cannot call a class as a function");
+					}
+				};
+				// 2. 类属性/方法定义工具函数（兼容原代码功能）
+				const defineClassProperties = (target, props, staticProps) => {
+					if (props) {
+						props.forEach(prop => {
+							prop.enumerable = prop.enumerable || false;
+							prop.configurable = true;
+							if ("value" in prop) {
+								prop.writable = true;
+							}
+							Object.defineProperty(target.prototype, prop.key, prop);
+						});
+					}
+					if (staticProps) {
+						staticProps.forEach(prop => {
+							prop.enumerable = prop.enumerable || false;
+							prop.configurable = true;
+							if ("value" in prop) {
+								prop.writable = true;
+							}
+							Object.defineProperty(target, prop.key, prop);
+						});
+					}
+					return target;
+				};
+				// 3. 标记模块为ES模块（保持原代码功能）
+				Object.defineProperty(t, "__esModule", {
+					value: true
+				});
+				// 4. 导入外部模块并处理兼容（原代码n(0)逻辑）
+				const scrollHelperModule = n(0);
+				const ScrollHelper = scrollHelperModule && scrollHelperModule.__esModule ?
+					scrollHelperModule : {
+						default: scrollHelperModule
+					};
+				// 5. 全屏管理类核心逻辑（内嵌在当前方法中）
+				class PlayerFullscreenManager {
+					constructor(player) {
+						checkClassInstance(this, PlayerFullscreenManager);
+						this.player = player;
+						this.lastScrollPosition = null; // 存储全屏前滚动位置
+						// 监听Web自定义全屏事件
+						this.player.events.on("webfullscreen", () => {
+							this.player.resize();
+						});
+						// 监听Web自定义全屏取消事件
+						this.player.events.on("webfullscreen_cancel", () => {
+							this.player.resize();
+							ScrollHelper.default.setScrollPosition(this.lastScrollPosition);
+						});
+						// 浏览器全屏状态变化处理函数
+						const handleBrowserFullscreenChange = () => {
+							this.player.resize();
+							if (this.isFullScreen("browser")) {
+								this.player.events.trigger("fullscreen");
+							} else {
+								ScrollHelper.default.setScrollPosition(this.lastScrollPosition);
+								this.player.events.trigger("fullscreen_cancel");
+							}
+						};
+						// 兼容各浏览器全屏状态变化事件
+						this.player.container.addEventListener("fullscreenchange",
+							handleBrowserFullscreenChange);
+						this.player.container.addEventListener("mozfullscreenchange",
+							handleBrowserFullscreenChange);
+						this.player.container.addEventListener("webkitfullscreenchange",
+							handleBrowserFullscreenChange);
+					}
+					// 检测全屏状态
+					isFullScreen(type = "browser") {
+						switch (type) {
+							case "browser":
+								return !!(document.fullscreenElement || document.mozFullScreenElement ||
+									document.webkitFullscreenElement);
+							case "web":
+								return this.player.container.classList.contains("hjplayer-fulled");
+							default:
+								return false;
+						}
+					}
+					// 请求进入全屏
+					request(type = "browser") {
+						const oppositeType = type === "browser" ? "web" : "browser";
+						const isOppositeFullscreen = this.isFullScreen(oppositeType);
+
+						if (!isOppositeFullscreen) {
+							this.lastScrollPosition = ScrollHelper.default.getScrollPosition();
+						}
+						switch (type) {
+							case "browser":
+								if (this.player.container.requestFullscreen) {
+									this.player.container.requestFullscreen();
+								} else if (this.player.container.mozRequestFullScreen) {
+									this.player.container.mozRequestFullScreen();
+								} else if (this.player.container.webkitRequestFullscreen) {
+									this.player.container.webkitRequestFullscreen();
+								} else if (this.player.video.webkitEnterFullscreen) {
+									this.player.video.webkitEnterFullscreen();
+								}
+								break;
+							case "web":
+								this.player.container.classList.add("hjplayer-fulled");
+								document.body.classList.add("hjplayer-web-fullscreen-fix");
+								this.player.events.trigger("webfullscreen");
+								break;
+						}
+						if (isOppositeFullscreen) {
+							this.cancel(oppositeType);
+						}
+					}
+					// 取消全屏
+					cancel(type = "browser") {
+						switch (type) {
+							case "browser":
+								if (document.cancelFullScreen) {
+									document.cancelFullScreen();
+								} else if (document.mozCancelFullScreen) {
+									document.mozCancelFullScreen();
+								} else if (document.webkitCancelFullScreen) {
+									document.webkitCancelFullScreen();
+								}
+								break;
+							case "web":
+								this.player.container.classList.remove("hjplayer-fulled");
+								document.body.classList.remove("hjplayer-web-fullscreen-fix");
+								this.player.events.trigger("webfullscreen_cancel");
+								break;
+						}
+					}
+					// 切换全屏状态
+					toggle(type = "browser") {
+						this.isFullScreen(type) ? this.cancel(type) : this.request(type);
+					}
+				}
+				// 6. 初始化类属性（保持与原代码兼容）
+				const FullscreenManager = defineClassProperties(
+					PlayerFullscreenManager,
+					[{
+							key: "isFullScreen",
+							value: PlayerFullscreenManager.prototype.isFullScreen
+						},
+						{
+							key: "request",
+							value: PlayerFullscreenManager.prototype.request
+						},
+						{
+							key: "cancel",
+							value: PlayerFullscreenManager.prototype.cancel
+						},
+						{
+							key: "toggle",
+							value: PlayerFullscreenManager.prototype.toggle
+						}
+					]
+				);
+				// 7. 导出默认模块（保持原代码输出逻辑）
+				t.default = PlayerFullscreenManager;
+			},
+			// --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			function(e, t, n) {
 				function i(e, t) {
 					if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function")
